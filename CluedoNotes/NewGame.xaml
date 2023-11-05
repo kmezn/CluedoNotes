@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CluedoNotes.NewGame"
+             Title="NewGame">
+    <VerticalStackLayout>
+        <Label 
+        Text="Select number of and name of players.!"
+        VerticalOptions="Center" 
+        HorizontalOptions="Center" />
+
+        <Label
+  Text="select version or something. "
+  SemanticProperties.HeadingLevel="Level1"
+  FontSize="32"
+  HorizontalOptions="Center" />
+
+    </VerticalStackLayout>
+    
+</ContentPage>
