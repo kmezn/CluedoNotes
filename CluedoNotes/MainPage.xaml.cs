@@ -21,9 +21,9 @@
             SemanticScreenReader.Announce(CounterBtn.Text);
         }
 
-        private void NewGame_Clicked(object sender, EventArgs e)
+        private void ClearData_Clicked(object sender, EventArgs e)
         {
-            
+
         }
     }
 }

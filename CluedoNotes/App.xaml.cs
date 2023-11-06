@@ -2,11 +2,13 @@
 {
     public partial class App : Application
     {
-        public App()
+        public static PlayerRepository PlayerRepo {  get; private set; }
+        public App(PlayerRepository repo)
         {
             InitializeComponent();
 
             MainPage = new AppShell();
+            PlayerRepo = repo;
         }
     }
 }

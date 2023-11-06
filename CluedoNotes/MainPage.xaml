@@ -21,13 +21,6 @@
                 FontSize="32"
                 HorizontalOptions="Center" />
 
-            <Label
-                Text="Continue or start new game?"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
-                FontSize="18"
-                HorizontalOptions="Center" />
-
             <Button
                 x:Name="CounterBtn"
                 Text="Click me"
@@ -37,15 +30,14 @@
 
 
             <Button
-    x:Name="NewGame"
+    x:Name="ClearData"
     Text="New Game"
-    SemanticProperties.Hint="Creates a new game...."
-    Clicked="NewGame_Clicked"
+    SemanticProperties.Hint="Creates a new game...i guess"
+    Clicked="ClearData_Clicked"
     HorizontalOptions="Center" />
 
             
-            
-            <Shell.FlyoutBehavior.
+           
         </VerticalStackLayout>
     </ScrollView>
 

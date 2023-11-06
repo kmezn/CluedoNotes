@@ -3,12 +3,36 @@
     x:Class="CluedoNotes.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:CluedoNotes"
-    Shell.FlyoutBehavior="Disabled">
+    xmlns:local="clr-namespace:CluedoNotes.Pages">
 
-    <ShellContent
+    
+    
+    
+    <!--<ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Route="MainPage" />-->
+
+    <FlyoutItem Title="SetUp" >
+        <ShellContent Title="Players" ContentTemplate="{DataTemplate local:SetUpPlayers}"/>
+        <ShellContent Title="Characters" ContentTemplate="{DataTemplate local:SetUpCharacters}"/>
+        
+        
+    </FlyoutItem>
+    <FlyoutItem Title="Gameplay">
+        <ShellContent Title="Players" ContentTemplate="{DataTemplate local:PlayersPage}">
+
+        </ShellContent>
+
+        <ShellContent Title="Rooms" ContentTemplate="{DataTemplate local:RoomsPage}">
+
+        </ShellContent>
+    </FlyoutItem>
+            
+
+
+
+
+
 
 </Shell>
