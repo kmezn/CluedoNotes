@@ -18,8 +18,8 @@ public partial class SetUpPlayers : ContentPage
         try
         {
             statusMessage.Text = string.Empty;
-            App.PlayerRepo.AddNewPlayer(newPlayer.Text);
-            statusMessage.Text = App.PlayerRepo.StatusMessage;
+            App.DBRepo.AddNewPlayer(newPlayer.Text);
+            statusMessage.Text = App.DBRepo.StatusMessage;
             newPlayer.Text = string.Empty;
             RefreshPlayers();
         }
@@ -35,8 +35,8 @@ public partial class SetUpPlayers : ContentPage
         statusMessage.Text = string.Empty;
         var button = sender as Button;
         var p = button.BindingContext as Player;
-        App.PlayerRepo.RemovePlayer(p);
-        statusMessage.Text = App.PlayerRepo.StatusMessage;
+        App.DBRepo.RemovePlayer(p);
+        statusMessage.Text = App.DBRepo.StatusMessage;
 
         RefreshPlayers();
     }
@@ -44,7 +44,7 @@ public partial class SetUpPlayers : ContentPage
 
     private void RefreshPlayers()
     {
-        List<Player> players = App.PlayerRepo.GetAllPlayers();
+        List<Player> players = App.DBRepo.GetAllPlayers();
         playerList.ItemsSource = players;
     }
 }

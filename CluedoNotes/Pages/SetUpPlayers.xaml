@@ -40,8 +40,6 @@
                             <Label Text="{Binding Id}"/>
                             <Label Grid.Column="1" Text="{Binding Name}"/>
                             <Button Grid.Column="2" Text="x"  x:Name=""
-                                    Command="{Binding  Path= BindingContext.RemovePlayerCommand,Source={Reference playerList }}" 
-                                    CommandParameter="{Binding .}" 
                                     Clicked="RemovePlayerClicked"
                                     />
                             

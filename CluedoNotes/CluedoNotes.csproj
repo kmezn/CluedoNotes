@@ -64,13 +64,31 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Pages\SetUpRooms.xaml.cs">
+	    <DependentUpon>SetUpRooms.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Pages\SetUpWeapons.xaml.cs">
+	    <DependentUpon>SetUpWeapons.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Pages\SetUpVictims.xaml.cs">
+	    <DependentUpon>SetUpVictims.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Pages\PlayersPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\RoomsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\SetUpCharacters.xaml">
+	  <MauiXaml Update="Pages\SetUpRooms.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\SetUpWeapons.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\SetUpVictims.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\SetUpPlayers.xaml">

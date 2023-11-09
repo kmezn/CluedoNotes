@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CluedoNotes.Repos;
+using Microsoft.Extensions.Logging;
 
 
 namespace CluedoNotes
@@ -16,8 +17,8 @@ namespace CluedoNotes
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            string dbPath = FileAccessHelper.GetLocalFilePath("players.db3");
-            builder.Services.AddSingleton<PlayerRepository>(s => ActivatorUtilities.CreateInstance<PlayerRepository>(s, dbPath));
+            string dbPath = FileAccessHelper.GetLocalFilePath("cluedo.db3");
+            builder.Services.AddSingleton<DBRepository>(s => ActivatorUtilities.CreateInstance<DBRepository>(s, dbPath));
 
 #if DEBUG
 		builder.Logging.AddDebug();
