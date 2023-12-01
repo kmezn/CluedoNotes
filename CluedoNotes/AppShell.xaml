@@ -16,7 +16,7 @@
     <FlyoutItem Title="SetUp" >
         <ShellContent Title="Players" ContentTemplate="{DataTemplate local:SetUpPlayers}"/>
         <ShellContent Title="Rooms" ContentTemplate="{DataTemplate local:SetUpRooms}"/>
-        <ShellContent Title="Victims" ContentTemplate="{DataTemplate local:SetUpVictims}"/>
+        <ShellContent Title="Suspects" ContentTemplate="{DataTemplate local:SetUpSuspects}"/>
         <ShellContent Title="Weapons" ContentTemplate="{DataTemplate local:SetUpWeapons}"/>
 
 

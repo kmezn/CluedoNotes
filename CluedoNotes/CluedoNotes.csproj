@@ -70,8 +70,8 @@
 	  <Compile Update="Pages\SetUpWeapons.xaml.cs">
 	    <DependentUpon>SetUpWeapons.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Pages\SetUpVictims.xaml.cs">
-	    <DependentUpon>SetUpVictims.xaml</DependentUpon>
+	  <Compile Update="Pages\SetUpSuspects.xaml.cs">
+	    <DependentUpon>SetUpSuspects.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -88,7 +88,7 @@
 	  <MauiXaml Update="Pages\SetUpWeapons.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\SetUpVictims.xaml">
+	  <MauiXaml Update="Pages\SetUpSuspects.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\SetUpPlayers.xaml">

@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 
 namespace CluedoNotes.Models
 {
-    [Table("Victims")]
-    public class Victim
+    [Table("Suspects")]
+    public class Suspect
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
         [MaxLength(255), Unique]
         public string Name { get; set; }
+        public bool IsConfirmed { get; set; }
+        public int PotentialCardEventNo { get; set; }
 
     }
 }

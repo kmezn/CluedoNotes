@@ -15,6 +15,8 @@ namespace CluedoNotes.Models
 
         [MaxLength(255), Unique]
         public string Name { get; set; }
+        public bool IsConfirmed {  get; set; }
+        public int PotentialCardEventNo {  get; set; }
 
     }
 }

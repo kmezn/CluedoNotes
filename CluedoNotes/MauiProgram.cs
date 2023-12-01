@@ -19,9 +19,8 @@ namespace CluedoNotes
 
             string dbPath = FileAccessHelper.GetLocalFilePath("cluedo.db3");
             builder.Services.AddSingleton<DBRepository>(s => ActivatorUtilities.CreateInstance<DBRepository>(s, dbPath));
-
 #if DEBUG
-		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

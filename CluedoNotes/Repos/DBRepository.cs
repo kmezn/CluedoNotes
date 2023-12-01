@@ -21,12 +21,11 @@ namespace CluedoNotes.Repos
                 return;
 
             conn = new SQLiteConnection(_dbPath);
+            conn.CreateTable<Cards>();
             conn.CreateTable<Player>();
             conn.CreateTable<Room>();
-            conn.CreateTable<Victim>();
+            conn.CreateTable<Suspect>();
             conn.CreateTable<Weapon>();
-
-
         }
 
         public DBRepository(string dbPath)
@@ -79,11 +78,18 @@ namespace CluedoNotes.Repos
             StatusMessage = string.Format("Player {0} Removed ", player.Name);
         }
 
+        public Player LogCardSeen(Player player)
+        {
+            Init();
+            conn.Update(player);
+            StatusMessage = string.Format("Player {0} cards updated", player.Name);
+            return player;
+        }
         #endregion
 
-        #region Victim
+        #region Suspect
 
-        public void AddNewVictim(string name)
+        public void AddNewSuspect(string name)
         {
             int result = 0;
             try
@@ -94,7 +100,7 @@ namespace CluedoNotes.Repos
                 if (string.IsNullOrEmpty(name))
                     throw new Exception("Valid name required");
 
-                result = conn.Insert(new Victim { Name = name });
+                result = conn.Insert(new Suspect { Name = name });
 
                 StatusMessage = string.Format("{0} record(s) added (Name: {1})", result, name);
             }
@@ -106,26 +112,26 @@ namespace CluedoNotes.Repos
         }
 
 
-        public List<Victim> GetAllVictims()
+        public List<Suspect> GetAllSuspects()
         {
             // TODO: Init then retrieve a list of Person objects from the database into a list
             try
             {
                 Init();
-                return conn.Table<Victim>().ToList();
+                return conn.Table<Suspect>().ToList();
             }
             catch (Exception ex)
             {
                 StatusMessage = string.Format("Failed to retrieve data. {0}", ex.Message);
             }
 
-            return new List<Victim>();
+            return new List<Suspect>();
         }
-        public void RemoveVictim(Victim victim)
+        public void RemoveSuspect(Suspect victim)
         {
             Init();
             conn.Delete(victim);
-            StatusMessage = string.Format("Victim {0} Removed ", victim.Name);
+            StatusMessage = string.Format("Suspect {0} Removed ", victim.Name);
         }
         #endregion
 
@@ -221,7 +227,7 @@ namespace CluedoNotes.Repos
         {
             Init();
             conn.Delete(weapon);
-            StatusMessage = string.Format("Victim {0} Removed ", weapon.Name);
+            StatusMessage = string.Format("Suspect {0} Removed ", weapon.Name);
         }
         #endregion
     }
