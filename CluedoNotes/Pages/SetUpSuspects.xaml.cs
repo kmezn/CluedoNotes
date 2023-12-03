@@ -15,7 +15,8 @@ public partial class SetUpSuspects : ContentPage
         try
         {
             statusMessage.Text = string.Empty;
-            App.DBRepo.AddNewSuspect(newSuspect.Text);
+            //App.DBRepo.AddNewSuspect(newSuspect.Text);
+            App.DBRepo.AddNewCard(newSuspect.Text, isSuspect: true);
             statusMessage.Text = App.DBRepo.StatusMessage;
             newSuspect.Text = string.Empty;
             RefreshSuspects();
@@ -31,8 +32,8 @@ public partial class SetUpSuspects : ContentPage
     {
         statusMessage.Text = string.Empty;
         var button = sender as Button;
-        var p = button.BindingContext as Suspect;
-        App.DBRepo.RemoveSuspect(p);
+        var p = button.BindingContext as Card;
+        App.DBRepo.RemoveCard(p);
         statusMessage.Text = App.DBRepo.StatusMessage;
 
         RefreshSuspects();
@@ -41,7 +42,7 @@ public partial class SetUpSuspects : ContentPage
 
     private void RefreshSuspects()
     {
-        List<Suspect> victims = App.DBRepo.GetAllSuspects();
+        List<Card> victims = App.DBRepo.GetAllCards(justSuspects: true);
         SuspectList.ItemsSource = victims;
     }
 }

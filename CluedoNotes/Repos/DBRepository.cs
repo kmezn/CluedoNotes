@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
+using Microsoft.EntityFrameworkCore.Sqlite;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace CluedoNotes.Repos
 {
@@ -21,11 +23,26 @@ namespace CluedoNotes.Repos
                 return;
 
             conn = new SQLiteConnection(_dbPath);
-            conn.CreateTable<Cards>();
+            conn.CreateTable<Card>();
             conn.CreateTable<Player>();
-            conn.CreateTable<Room>();
-            conn.CreateTable<Suspect>();
-            conn.CreateTable<Weapon>();
+            conn.CreateTable<HeldCard>();
+
+#if DEBUG
+            AddNewPlayer("Kes");
+            AddNewPlayer("Char");
+            AddNewPlayer("Wendy");
+            AddNewPlayer("Paul");
+            AddNewPlayer("Luke");
+            AddNewCard("Kitchen", isRoom: true);
+            AddNewCard("Ballroom", isRoom: true);
+            AddNewCard("Library", isRoom: true);
+            AddNewCard("Crnl Mustard", isSuspect: true);
+            AddNewCard("Proff Plum", isSuspect: true);
+            AddNewCard("Miss Scarlett", isSuspect: true);
+            AddNewCard("Gun", isWeapon: true);
+            AddNewCard("Candlestick", isWeapon: true);
+            AddNewCard("Rope", isWeapon: true);
+#endif
         }
 
         public DBRepository(string dbPath)
@@ -40,7 +57,6 @@ namespace CluedoNotes.Repos
             try
             {
                 Init();
-
                 // basic validation to ensure a name was entered
                 if (string.IsNullOrEmpty(name))
                     throw new Exception("Valid name required");
@@ -58,7 +74,6 @@ namespace CluedoNotes.Repos
 
         public List<Player> GetAllPlayers()
         {
-            // TODO: Init then retrieve a list of Person objects from the database into a list
             try
             {
                 Init();
@@ -80,27 +95,46 @@ namespace CluedoNotes.Repos
 
         public Player LogCardSeen(Player player)
         {
-            Init();
-            conn.Update(player);
-            StatusMessage = string.Format("Player {0} cards updated", player.Name);
-            return player;
+            try
+            {
+                Init();
+                //var p = conn.Table<Player>().First();
+                //p.HeldCards.Add(new HeldCard { CardId = conn.Table<Card>().FirstOrDefault().Id, PlayerId = player.Id });
+                conn.Update(player);
+                //conn.Select<Card>(c => c.);
+                //.Update(player.HeldCards.AddOrUpdate());
+                StatusMessage = string.Format("Player {0} cards updated", player.Name);
+                return player;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
         #endregion
-
-        #region Suspect
-
-        public void AddNewSuspect(string name)
+        public void AddNewCard(string name, bool isRoom = false, bool isSuspect = false, bool isWeapon = false)
         {
             int result = 0;
             try
             {
                 Init();
-
                 // basic validation to ensure a name was entered
                 if (string.IsNullOrEmpty(name))
                     throw new Exception("Valid name required");
+                if (!isRoom && !isSuspect && !isWeapon)
+                    throw new Exception("Entry is not designated with a card type");
 
-                result = conn.Insert(new Suspect { Name = name });
+                result = conn.Insert(new Card
+                {
+                    Name = name
+                    ,
+                    IsRoom = isRoom
+                ,
+                    IsSuspect = isSuspect
+                ,
+                    IsWeapon = isWeapon
+                });
 
                 StatusMessage = string.Format("{0} record(s) added (Name: {1})", result, name);
             }
@@ -110,125 +144,34 @@ namespace CluedoNotes.Repos
             }
 
         }
-
-
-        public List<Suspect> GetAllSuspects()
+        public List<Card> GetAllCards(bool justRooms = false, bool justSuspects = false, bool JustWeapons = false)
         {
-            // TODO: Init then retrieve a list of Person objects from the database into a list
             try
             {
                 Init();
-                return conn.Table<Suspect>().ToList();
+                if (justRooms)
+                    return conn.Table<Card>().Where(c => c.IsRoom == justRooms).ToList();
+                else if (justSuspects)
+                    return conn.Table<Card>().Where(c => c.IsSuspect == justSuspects).ToList();
+                else if (JustWeapons)
+                    return conn.Table<Card>().Where(c => c.IsWeapon == JustWeapons).ToList();
+                else
+                    return conn.Table<Card>().ToList();
+
             }
             catch (Exception ex)
             {
                 StatusMessage = string.Format("Failed to retrieve data. {0}", ex.Message);
             }
 
-            return new List<Suspect>();
+            return new List<Card>();
         }
-        public void RemoveSuspect(Suspect victim)
+
+        public void RemoveCard(Card card)
         {
             Init();
-            conn.Delete(victim);
-            StatusMessage = string.Format("Suspect {0} Removed ", victim.Name);
+            conn.Delete(card);
+            StatusMessage = string.Format("Player {0} Removed ", card.Name);
         }
-        #endregion
-
-        #region Room
-
-        public void AddNewRoom(string name)
-        {
-            int result = 0;
-            try
-            {
-                Init();
-
-                // basic validation to ensure a name was entered
-                if (string.IsNullOrEmpty(name))
-                    throw new Exception("Valid name required");
-
-                result = conn.Insert(new Room { Name = name });
-
-                StatusMessage = string.Format("{0} record(s) added (Name: {1})", result, name);
-            }
-            catch (Exception ex)
-            {
-                StatusMessage = string.Format("Failed to add {0}. Error: {1}", name, ex.Message);
-            }
-
-        }
-
-
-        public List<Room> GetAllRooms()
-        {
-            // TODO: Init then retrieve a list of Person objects from the database into a list
-            try
-            {
-                Init();
-                return conn.Table<Room>().ToList();
-            }
-            catch (Exception ex)
-            {
-                StatusMessage = string.Format("Failed to retrieve data. {0}", ex.Message);
-            }
-
-            return new List<Room>();
-        }
-        public void RemoveRoom(Room room)
-        {
-            Init();
-            conn.Delete(room);
-            StatusMessage = string.Format("Room {0} Removed ", room.Name);
-        }
-        #endregion
-
-        #region Weapon
-
-        public void AddNewWeapon(string name)
-        {
-            int result = 0;
-            try
-            {
-                Init();
-
-                // basic validation to ensure a name was entered
-                if (string.IsNullOrEmpty(name))
-                    throw new Exception("Valid name required");
-
-                result = conn.Insert(new Weapon { Name = name });
-
-                StatusMessage = string.Format("{0} record(s) added (Name: {1})", result, name);
-            }
-            catch (Exception ex)
-            {
-                StatusMessage = string.Format("Failed to add {0}. Error: {1}", name, ex.Message);
-            }
-
-        }
-
-
-        public List<Weapon> GetAllWeapons()
-        {
-            // TODO: Init then retrieve a list of Person objects from the database into a list
-            try
-            {
-                Init();
-                return conn.Table<Weapon>().ToList();
-            }
-            catch (Exception ex)
-            {
-                StatusMessage = string.Format("Failed to retrieve data. {0}", ex.Message);
-            }
-
-            return new List<Weapon>();
-        }
-        public void RemoveWeapon(Weapon weapon)
-        {
-            Init();
-            conn.Delete(weapon);
-            StatusMessage = string.Format("Suspect {0} Removed ", weapon.Name);
-        }
-        #endregion
     }
 }

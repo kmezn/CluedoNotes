@@ -15,7 +15,7 @@ public partial class SetUpRooms : ContentPage
         try
         {
             statusMessage.Text = string.Empty;
-            App.DBRepo.AddNewRoom(newRoom.Text);
+            App.DBRepo.AddNewCard(newRoom.Text, isRoom: true);
             statusMessage.Text = App.DBRepo.StatusMessage;
             newRoom.Text = string.Empty;
             RefreshRooms();
@@ -31,8 +31,8 @@ public partial class SetUpRooms : ContentPage
     {
         statusMessage.Text = string.Empty;
         var button = sender as Button;
-        var p = button.BindingContext as Room;
-        App.DBRepo.RemoveRoom(p);
+        var p = button.BindingContext as Card;
+        App.DBRepo.RemoveCard(p);
         statusMessage.Text = App.DBRepo.StatusMessage;
 
         RefreshRooms();
@@ -41,7 +41,7 @@ public partial class SetUpRooms : ContentPage
 
     private void RefreshRooms()
     {
-        List<Room> victims = App.DBRepo.GetAllRooms();
+        List<Card> victims = App.DBRepo.GetAllCards(justRooms: true);
         RoomList.ItemsSource = victims;
     }
 }

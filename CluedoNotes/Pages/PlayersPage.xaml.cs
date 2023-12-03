@@ -24,6 +24,11 @@ public partial class PlayersPage : ContentPage
             statusMessage.Text = string.Empty;
             var button = sender as Button;
             var p = button.BindingContext as Player;
+            // test
+            p.HeldCards.Add(new HeldCard { IsConfirmed = false, CardId = App.DBRepo.GetAllCards().FirstOrDefault().Id, PlayerId = p.Id});
+
+            //end test thing
+
             App.DBRepo.LogCardSeen(p);
             RefreshPlayers();
         }

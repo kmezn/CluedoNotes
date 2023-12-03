@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
+using SQLiteNetExtensions.Attributes;
 
 namespace CluedoNotes.Models
 {
@@ -16,6 +17,7 @@ namespace CluedoNotes.Models
         [MaxLength(255), Unique] 
         public string Name { get; set; }
 
-        public Cards HeldCards { get; set; }
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
+        public List<HeldCard> HeldCards { get; set; } = new List<HeldCard>();
     }
 }

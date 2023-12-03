@@ -17,7 +17,7 @@ public partial class SetUpWeapons : ContentPage
         try
         {
             statusMessage.Text = string.Empty;
-            App.DBRepo.AddNewWeapon(newWeapon.Text);
+            App.DBRepo.AddNewCard(newWeapon.Text, isWeapon: true);
             statusMessage.Text = App.DBRepo.StatusMessage;
             newWeapon.Text = string.Empty;
             RefreshWeapons();
@@ -33,8 +33,8 @@ public partial class SetUpWeapons : ContentPage
     {
         statusMessage.Text = string.Empty;
         var button = sender as Button;
-        var p = button.BindingContext as Weapon;
-        App.DBRepo.RemoveWeapon(p);
+        var p = button.BindingContext as Card;
+        App.DBRepo.RemoveCard(p);
         statusMessage.Text = App.DBRepo.StatusMessage;
 
         RefreshWeapons();
@@ -43,7 +43,7 @@ public partial class SetUpWeapons : ContentPage
 
     private void RefreshWeapons()
     {
-        List<Weapon> victims = App.DBRepo.GetAllWeapons();
+        List<Card> victims = App.DBRepo.GetAllCards(JustWeapons: true);
         WeaponList.ItemsSource = victims;
     }
 }
