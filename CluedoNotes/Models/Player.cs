@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SQLite;
-using SQLiteNetExtensions.Attributes;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CluedoNotes.Models
 {
     [Table("Players")]
     public class Player
     {
-        [PrimaryKey, AutoIncrement]
+        [Key]
         public int Id { get; set; }
         
-        [MaxLength(255), Unique] 
+        [MaxLength(255), Required] 
         public string Name { get; set; }
 
-        [OneToMany(CascadeOperations = CascadeOperation.All)]
-        public List<HeldCard> HeldCards { get; set; } = new List<HeldCard>();
+        //[OneToMany(CascadeOperations = CascadeOperation.All)]
+        public virtual List<HeldCard> HeldCards { get; set; } = new List<HeldCard>();
     }
 }

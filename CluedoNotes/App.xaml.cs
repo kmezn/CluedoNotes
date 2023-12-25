@@ -4,13 +4,13 @@ namespace CluedoNotes
 {
     public partial class App : Application
     {
-        public static DBRepository DBRepo {  get; private set; }
-        public App(DBRepository repo)
+        public static CluedoContext context {  get; private set; }
+        public App()
         {
             InitializeComponent();
 
             MainPage = new AppShell();
-            DBRepo = repo;
+            context = new CluedoContext();
         }
     }
 }

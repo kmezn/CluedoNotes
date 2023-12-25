@@ -59,12 +59,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.14" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.14" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="7.0.14" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
-		<PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
-		<PackageReference Include="SQLiteNetExtensions" Version="2.1.0" />
-		<PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.6" />
+		<PackageReference Include="System.Data.SQLite" Version="1.0.118" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -18,7 +18,7 @@ namespace CluedoNotes
                 });
 
             string dbPath = FileAccessHelper.GetLocalFilePath("cluedo.db3");
-            builder.Services.AddSingleton<DBRepository>(s => ActivatorUtilities.CreateInstance<DBRepository>(s, dbPath));
+            builder.Services.AddSingleton<CluedoContext>(s => ActivatorUtilities.CreateInstance<CluedoContext>(s, dbPath));
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
@@ -34,4 +34,5 @@ namespace CluedoNotes
             return System.IO.Path.Combine(FileSystem.AppDataDirectory, filename);
         }
     }
+
 }

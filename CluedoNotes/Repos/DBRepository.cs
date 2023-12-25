@@ -1,54 +1,80 @@
 ﻿using CluedoNotes.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
-using Microsoft.EntityFrameworkCore.Sqlite;
-using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
 
 namespace CluedoNotes.Repos
 {
 
-    public class DBRepository
+    public class CluedoContext : DbContext
     {
         string _dbPath;
-        private SQLiteConnection conn;
+        //private SQLiteConnection conn;
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    base.OnConfiguring(optionsBuilder);
+        //}
+
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    //modelBuilder.Entity<>
+        //    base.OnModelCreating(modelBuilder);
+        //}
         public string StatusMessage { get; set; }
 
-        private void Init()
+        public DbSet<Card> Cards { get; set; }
+        public DbSet<Player> Players { get; set; }
+
+
+
+
+        private void Init(CluedoContext context)
         {
-            if (conn != null)
+            if (context != null)
                 return;
 
-            conn = new SQLiteConnection(_dbPath);
-            conn.CreateTable<Card>();
-            conn.CreateTable<Player>();
-            conn.CreateTable<HeldCard>();
+
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
+
+
+
+
+
+            //conn.CreateTable<Card>();
+            //conn.CreateTable<Player>();
+            //conn.CreateTable<HeldCard>();
+
 
 #if DEBUG
-            AddNewPlayer("Kes");
-            AddNewPlayer("Char");
-            AddNewPlayer("Wendy");
-            AddNewPlayer("Paul");
-            AddNewPlayer("Luke");
-            AddNewCard("Kitchen", isRoom: true);
-            AddNewCard("Ballroom", isRoom: true);
-            AddNewCard("Library", isRoom: true);
-            AddNewCard("Crnl Mustard", isSuspect: true);
-            AddNewCard("Proff Plum", isSuspect: true);
-            AddNewCard("Miss Scarlett", isSuspect: true);
-            AddNewCard("Gun", isWeapon: true);
-            AddNewCard("Candlestick", isWeapon: true);
-            AddNewCard("Rope", isWeapon: true);
+            var players = new List<Player> {
+                new Player{Name = "Kes"},
+                new Player{Name = "Char"},
+                new Player {Name = "Wendy"},
+                new Player {Name = "Paul"},
+                new Player {Name = "Luke"}
+                };
+            players.ForEach(p => context.Players.Add(p));
+
+            var cards = new List<Card>
+            {
+                new Card{Name = "Kitchen", IsRoom  = true},
+                new Card{Name = "Ballroom", IsRoom =  true },
+                new Card { Name = "Library", IsRoom = true },
+                new Card { Name = "Crnl Mustard", IsSuspect = true },
+                new Card { Name = "Proff Plum", IsSuspect = true },
+                new Card {Name ="Miss Scarlett", IsSuspect = true},
+                new Card { Name ="Gun", IsWeapon = true },
+                new Card { Name ="Candlestick", IsWeapon = true },
+                new Card { Name ="Rope", IsWeapon = true }
+            };
+            cards.ForEach(c => context.Cards.Add(c));
+            context.SaveChanges();
 #endif
         }
 
-        public DBRepository(string dbPath)
-        {
-            _dbPath = dbPath;
-        }
+        //public DBRepository(string dbPath)
+        //{
+        //    _dbPath = dbPath;
+        //}
 
         #region Player
         public void AddNewPlayer(string name)
