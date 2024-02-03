@@ -27,10 +27,15 @@ namespace CluedoNotes
                 Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     @"CluedoNotes.db");
+#if DEBUG
+            dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), 
+                @"CluedoNotes.db");
+#endif
             // Register WeatherForecastService and the SQLite database
-            builder.Services.AddSingleton<WeatherForecastService>(
-                s => ActivatorUtilities.CreateInstance<WeatherForecastService>(s, dbPath));
-
+            IServiceCollection serviceCollection = builder.Services.AddSingleton(
+                s => ActivatorUtilities.CreateInstance<DBService>(s, dbPath));
+            builder.Services.AddSingleton<SetupCardService>();
+            builder.Services.AddSingleton<SetupPlayerService>();
 
             return builder.Build();
         }
