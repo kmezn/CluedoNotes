@@ -1,5 +1,4 @@
 ﻿using SQLite;
-using Windows.Storage.Streams;
 
 namespace CluedoNotes.Data;
 public class DBService
@@ -49,11 +48,16 @@ public class DBService
         };
         var debugPlayers = new List<Player>()
         {
-            new Player(){Name = ""}
+            new Player(){Name = "Player 1"},
+            new Player(){Name = "Player 2"},
+            new Player(){Name = "Player 3"},
+            new Player(){Name = "Player 4"}
         };
+        var cards = await GetCardsAsync();
+        var players = await GetPlayersAsync();
 
-        //debugCards.Select(s => conn.Table<Card>().Where(c => !c.Name.Any(s.Name)).ToListAsync().ForEach(async r => await CreateCardAsync(r));
-        debugPlayers.ForEach(async p => await CreatePlayerAsync(p));
+        debugCards.Where(c => !cards.Any(a => a.Name == c.Name)).ToList().ForEach(async r => await CreateCardAsync(r));
+        debugPlayers.Where(c => !players.Any(a => a.Name == c.Name)).ToList().ForEach(async p => await CreatePlayerAsync(p));
 
         //List<Task<Card>> cardTasks = new List<Task<Card>>();
         //debugCards.ForEach(r => cardTasks.Add(CreateCardAsync(r)));
