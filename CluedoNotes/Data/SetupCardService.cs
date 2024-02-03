@@ -9,12 +9,10 @@ public class SetupCardService
     public async Task<Card> CreateCardAsync(Card card)
     {
         // Insert
-        var card2 = await App._dbService.CreateCardAsync(card);
+        await App._dbService.CreateCardAsync(card);
         // return the object with the
         // auto incremented Id populated
-
-        //NOTE: Check that ID is updated when card created. 
-        return card2;
+        return card;
     }
     public async Task<Card> UpdateCardAsync(Card card)
     {

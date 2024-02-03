@@ -10,28 +10,27 @@ public class SetupPlayerService
     
     public async Task<List<Player>> GetPlayersAsync()
     {
-        return await App._dbService.GetPlayersAsync();
-        
+        return await App._dbService.GetPlayersAsync();   
     }
     public async Task<Player> CreatePlayerAsync(Player player)
     {
         // Insert
-        var p = await App._dbService.CreatePlayerAsync(player);
+        await App._dbService.CreatePlayerAsync(player);
         // return the object with the
         // auto incremented Id populated
-        return p;
+        return player;
     }
     public async Task<Player> UpdatePlayerAsync(Player player)
     {
         // Update
-        var p = await App._dbService.UpdatePlayerAsync(player);
+        await App._dbService.UpdatePlayerAsync(player);
         // Return the updated object
-        return p;
+        return player;
     }
     public async Task<Player> DeletePlayerAsync(Player player)
     {
         // Delete
-        var p = await App._dbService.DeletePlayerAsync(player);     
-        return p;
+        await App._dbService.DeletePlayerAsync(player);     
+        return player;
     }
 }
