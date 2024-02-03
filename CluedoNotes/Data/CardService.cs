@@ -1,5 +1,5 @@
 ﻿namespace CluedoNotes.Data;
-public class SetupCardService
+public class CardService
 {
     public string StatusMessage { get; set; }
     public async Task<List<Card>> GetCardsAsync()

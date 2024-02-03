@@ -1,0 +1,201 @@
+﻿@page "/SetupCards"
+@using CluedoNotes.Data
+@inject CardService CardService
+<h1>Setup Cards</h1>
+<p style="color:red">@Error</p>
+@if (cards == null)
+{
+    <!-- Show this if the current user has no data... yet... -->
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <!-- Show the forecasts for the current user -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Card Type</th>
+                @* <th>IsRoom</th>
+                <th>IsWeapon</th> *@
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var card in cards)
+            {
+                <tr>
+                    <td>@card.Name</td>
+                    <td>@card.CardType</td>
+                    @* <td>asdf1</td>
+                    <td> asdf </td> *@
+                    <td>
+                        <!-- Edit the current card -->
+                        <button class="btn btn-primary"
+                        @onclick="(() => EditCard(card))">
+                            Edit
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p>
+        <!-- Add a new card -->
+        <button class="btn btn-success"
+            @onclick="AddNewCard">
+            Add New Card
+        </button>
+    </p>
+
+}
+
+
+@if (ShowPopup)
+{
+    <!-- This is the popup to create or edit a forecast -->
+    <div class="modal" tabindex="-1" style="display:block" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Add / Edit Card</h3>
+                    <!-- Button to close the popup -->
+                    <button type="button" class="close"
+                    @onclick="ClosePopup">
+                        <span aria-hidden="true">X</span>
+                    </button>
+                </div>
+                <!-- Edit form for the current forecast -->
+                <div class="modal-body">
+                    <input class="form-control" type="text"
+                           placeholder="Card Name"
+                    @bind="objCard.Name" />
+@*                     <InputRadioGroup>
+                        <InputRadio Name="Suspect" Value="objCard.IsWeapon = true"></InputRadio>
+                    </InputRadioGroup> *@
+
+                    <InputSelect class="form-control" @bind-Value="@objCard.CardType">
+                        @foreach (var type in Enum.GetValues(typeof(CardType)))
+                        {
+                            <option value="@type">@type</option>
+                        }
+                    </InputSelect>
+                    @* <input class="form-control" type="text"
+                           placeholder="Fahrenheit forecast"
+                    @bind="objWeatherForecast.TemperatureF" /> *@
+                    @* <input class="form-control" type="text"
+                           placeholder="Summary"
+                    @bind="objWeatherForecast.Summary" /> *@
+                    <br />
+                    <!-- Button to save the forecast -->
+                    <button class="btn btn-success"
+                    @onclick="SaveCard">
+                        Save
+                    </button>&nbsp;
+                    <!-- Only show delete button if not a new record -->
+@*                     @if (Card.Id > 0)
+                    {
+                        <!-- Button to delete the forecast -->
+                        <button class="btn btn-danger"
+                        @onclick="DeleteCard">
+                            Delete
+                        </button>
+                    } *@
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code
+{
+    string Error = "";
+    List<Card> cards = new List<Card>();
+    Card objCard = new Card();
+    bool ShowPopup = false;
+    protected override async Task OnInitializedAsync()
+    {
+        // Get the forecasts
+        cards = await CardService.GetCardsAsync();
+    }
+    void AddNewCard()
+    {
+        // Make new forecast
+        objCard = new Card();
+        // Set Id to 0 so we know it is a new record
+        objCard.Id = 0;
+        // Open the Popup
+        ShowPopup = true;
+    }
+    void EditCard(Card card)
+    {
+        // Set the selected forecast
+        // as the current forecast
+        objCard = card;
+        // Open the Popup
+        ShowPopup = true;
+    }
+
+    void ClosePopup()
+    {
+        // Close the Popup
+        ShowPopup = false;
+    }
+
+    async Task SaveCard()
+    {
+        // Close the Popup
+        ShowPopup = false;
+        Error = "";
+        try
+        {
+            // A new forecast will have the Id set to 0
+            if (objCard.Id == 0)
+            {
+                // // Create new forecast
+                // Card objNewCard = new Card();
+                // objNewCard.Name = objCard.Name;
+                // objNewCard.CardType = objCard.CardType;
+                // objNewWeatherForecast.Summary = objWeatherForecast.Summary;
+                // objNewWeatherForecast.TemperatureC =
+                // Convert.ToInt32(objWeatherForecast.TemperatureC);
+                // objNewWeatherForecast.TemperatureF =
+                // Convert.ToInt32(objWeatherForecast.TemperatureF);
+                // Save the result
+                var NewCard =
+                    await CardService.CreateCardAsync(objCard);
+                // Add the Forcast
+                cards.Add(NewCard);
+            }
+            else
+            {
+                //This is an update
+                await CardService.UpdateCardAsync(objCard);
+            }
+        }
+        catch (Exception ex)
+        {
+            Error = ex.Message;
+        }
+    }
+
+
+    async Task DeleteCard()
+    {
+        // Close the Popup
+        ShowPopup = false;
+        try
+        {
+            Error = "";
+            // Delete the forecast
+            await CardService.DeleteCardAsync(objCard);
+            // Remove the Forcast
+            cards.Remove(objCard);
+        }
+        catch (Exception ex)
+        {
+            Error = ex.Message;
+        }
+    }
+}

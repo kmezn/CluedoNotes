@@ -1,9 +1,9 @@
-﻿@page "/SetupCard"
+﻿@page "/SetupPlayers"
 @using CluedoNotes.Data
-@inject SetupCardService SetupCardService
-<h1>Setup Cards</h1>
+@inject PlayerService PlayerService
+<h1>Setup Players</h1>
 <p style="color:red">@Error</p>
-@if (cards == null)
+@if (players == null)
 {
     <!-- Show this if the current user has no data... yet... -->
     <p><em>Loading...</em></p>
@@ -15,24 +15,24 @@ else
         <thead>
             <tr>
                 <th>Name</th>
-                <th>IsSuspect</th>
-                <th>IsRoom</th>
-                <th>IsWeapon</th>
+                <th>Held Cards</th>
+                <th>Possible Cards</th>
+                @* <th>IsWeapon</th> *@
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var card in cards)
+            @foreach (var player in players)
             {
                 <tr>
-                    <td>@card.Name</td>
-                    <td>@card.IsSuspect</td>
-                    <td>@card.IsRoom</td>
-                    <td>@card.IsWeapon</td>
+                    <td>@player.Name</td>
+                    @* <td>@card.CardType</td> *@
+                    @* <td>asdf1</td>
+                    <td> asdf </td> *@
                     <td>
                         <!-- Edit the current card -->
                         <button class="btn btn-primary"
-                        @onclick="(() => EditCard(card))">
+                        @onclick="(() => EditPlayer(player))">
                             Edit
                         </button>
                     </td>
@@ -43,22 +43,22 @@ else
     <p>
         <!-- Add a new card -->
         <button class="btn btn-success"
-            @onclick="AddNewCard">
-            Add New Card
+            @onclick="AddNewPlayer">
+            Add New Player
         </button>
     </p>
 
 }
 
 
-@if (ShowPopup)
+@if (ShowPlayerPopup)
 {
     <!-- This is the popup to create or edit a forecast -->
     <div class="modal" tabindex="-1" style="display:block" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Add / Edit Card</h3>
+                    <h3 class="modal-title">Add / Edit Player</h3>
                     <!-- Button to close the popup -->
                     <button type="button" class="close"
                     @onclick="ClosePopup">
@@ -68,14 +68,18 @@ else
                 <!-- Edit form for the current forecast -->
                 <div class="modal-body">
                     <input class="form-control" type="text"
-                           placeholder="Card Name"
-                    @bind="objCard.Name" />
+                           placeholder="Player Name"
+                    @bind="objPlayer.Name" />
 @*                     <InputRadioGroup>
                         <InputRadio Name="Suspect" Value="objCard.IsWeapon = true"></InputRadio>
                     </InputRadioGroup> *@
-                    <InputCheckbox class="form-control" @bind-Value="objCard.IsSuspect" />
-                    <InputCheckbox class="form-control" @bind-Value="objCard.IsRoom" />
-                    <InputCheckbox class="form-control" @bind-Value="objCard.IsWeapon" />
+
+                    @* <InputSelect class="form-control" @bind-Value="@objCard.CardType">
+                        @foreach (var type in Enum.GetValues(typeof(CardType)))
+                        {
+                            <option value="@type">@type</option>
+                        }
+                    </InputSelect> *@
                     @* <input class="form-control" type="text"
                            placeholder="Fahrenheit forecast"
                     @bind="objWeatherForecast.TemperatureF" /> *@
@@ -107,69 +111,67 @@ else
 @code
 {
     string Error = "";
-    List<Card> cards = new List<Card>();
-    Card objCard = new Card();
-    bool ShowPopup = false;
+    List<Player> players = new List<Player>();
+    Player objPlayer = new Player();
+    bool ShowPlayerPopup = false;
     protected override async Task OnInitializedAsync()
     {
         // Get the forecasts
-        cards = await SetupCardService.GetCardsAsync();
+        players = await PlayerService.GetPlayersAsync();
     }
-    void AddNewCard()
+    void AddNewPlayer()
     {
         // Make new forecast
-        objCard = new Card();
+        objPlayer = new Player();
         // Set Id to 0 so we know it is a new record
-        objCard.Id = 0;
+        objPlayer.Id = 0;
         // Open the Popup
-        ShowPopup = true;
+        ShowPlayerPopup = true;
     }
-    void EditCard(Card card)
+    void EditPlayer(Player player)
     {
         // Set the selected forecast
         // as the current forecast
-        objCard = card;
+        objPlayer = player;
         // Open the Popup
-        ShowPopup = true;
+        ShowPlayerPopup = true;
     }
 
     void ClosePopup()
     {
         // Close the Popup
-        ShowPopup = false;
+        ShowPlayerPopup = false;
     }
 
     async Task SaveCard()
     {
         // Close the Popup
-        ShowPopup = false;
+        ShowPlayerPopup = false;
         Error = "";
         try
         {
             // A new forecast will have the Id set to 0
-            if (objCard.Id == 0)
+            if (objPlayer.Id == 0)
             {
                 // Create new forecast
-                Card objNewCard = new Card();
-                objNewCard.Name = objCard.Name;
-                objNewCard.IsWeapon = objCard.IsWeapon;
-                objNewCard.IsRoom = objCard.IsRoom;
-                objNewCard.IsSuspect = objCard.IsSuspect;
+                // Player objNewPlayer = new Player();
+                // objNewPlayer.Name = objCard.Name;
+                // objNewPlayer.CardType = objCard.CardType;
                 // objNewWeatherForecast.Summary = objWeatherForecast.Summary;
                 // objNewWeatherForecast.TemperatureC =
                 // Convert.ToInt32(objWeatherForecast.TemperatureC);
                 // objNewWeatherForecast.TemperatureF =
                 // Convert.ToInt32(objWeatherForecast.TemperatureF);
                 // Save the result
-                var NewCard =
-                    await SetupCardService.CreateCardAsync(objCard);
+                var newPlayer =
+                    await PlayerService.CreatePlayerAsync(objPlayer);
                 // Add the Forcast
-                cards.Add(NewCard);
+                players.Add(newPlayer);
             }
             else
             {
                 //This is an update
-                await SetupCardService.UpdateCardAsync(objCard);
+                await PlayerService.UpdatePlayerAsync(objPlayer);
             }
         }
         catch (Exception ex)
@@ -182,14 +184,14 @@ else
     async Task DeleteCard()
     {
         // Close the Popup
-        ShowPopup = false;
+        ShowPlayerPopup = false;
         try
         {
             Error = "";
             // Delete the forecast
-            await SetupCardService.DeleteCardAsync(objCard);
+            await PlayerService.DeletePlayerAsync(objPlayer);
             // Remove the Forcast
-            cards.Remove(objCard);
+            players.Remove(objPlayer);
         }
         catch (Exception ex)
         {

@@ -34,8 +34,8 @@ namespace CluedoNotes
             // Register WeatherForecastService and the SQLite database
             IServiceCollection serviceCollection = builder.Services.AddSingleton(
                 s => ActivatorUtilities.CreateInstance<DBService>(s, dbPath));
-            builder.Services.AddSingleton<SetupCardService>();
-            builder.Services.AddSingleton<SetupPlayerService>();
+            builder.Services.AddSingleton<CardService>();
+            builder.Services.AddSingleton<PlayerService>();
 
             return builder.Build();
         }

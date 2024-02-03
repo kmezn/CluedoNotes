@@ -1,12 +1,8 @@
-﻿namespace CluedoNotes.Data;
-public class SetupPlayerService
+﻿
+namespace CluedoNotes.Data;
+public class PlayerService
 {
-    string _dbPath;
     public string StatusMessage { get; set; }
-    public SetupPlayerService(string dbPath)
-    {
-        _dbPath = dbPath;
-    }
     
     public async Task<List<Player>> GetPlayersAsync()
     {
