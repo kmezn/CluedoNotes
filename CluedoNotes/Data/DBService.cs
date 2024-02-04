@@ -19,7 +19,8 @@ public class DBService
         conn = new SQLiteAsyncConnection(_dbPath);
 
         await conn.CreateTableAsync<Card>();
-        await conn.CreateTableAsync<Player>();
+        CreateTableResult createTableResult1 = await conn.CreateTableAsync<Player>();
+        CreateTableResult createTableResult = await conn.CreateTableAsync<HeldCard>();
 
 #if DEBUG
         var debugCards = new List<Card>()
@@ -59,6 +60,8 @@ public class DBService
         debugCards.Where(c => !cards.Any(a => a.Name == c.Name)).ToList().ForEach(async r => await CreateCardAsync(r));
         debugPlayers.Where(c => !players.Any(a => a.Name == c.Name)).ToList().ForEach(async p => await CreatePlayerAsync(p));
 
+        
+
         //List<Task<Card>> cardTasks = new List<Task<Card>>();
         //debugCards.ForEach(r => cardTasks.Add(CreateCardAsync(r)));
         //var debugPlayers = new List<Player>()
@@ -73,8 +76,8 @@ public class DBService
     }
     public async Task<List<Card>> GetCardsAsync()
     {
-        await InitAsync();
-        return await conn.Table<Card>().ToListAsync();
+            await InitAsync();
+            return await conn.Table<Card>().ToListAsync();
     }
     public async Task<Card> CreateCardAsync(Card card)
     {
@@ -101,7 +104,13 @@ public class DBService
     public async Task<List<Player>> GetPlayersAsync()
     {
         await InitAsync();
-        return await conn.Table<Player>().ToListAsync();
+        var players = await conn.Table<Player>().ToListAsync();
+        foreach (var player in players)
+        {
+            player.HeldCards = await conn.Table<HeldCard>().ToListAsync();
+        }
+
+        return players;
     }
     public async Task<Player> CreatePlayerAsync(Player player)
     {
@@ -118,6 +127,27 @@ public class DBService
         // Return the updated object
         return player;
     }
+
+    public async Task<Player> UpdatePlayerCardsAsync(Player player)
+    {
+        // loop held cards. 
+        foreach (var h in player.HeldCards)
+        {
+            if (h.Id == 0)
+            {
+                await conn.InsertAsync(h);
+            }
+            else
+            {
+                await conn.UpdateAsync(h);
+            }
+            
+        }
+        // Return the updated object
+        return player;
+    }
+    
+
     public async Task<Player> DeletePlayerAsync(Player player)
     {
         // Delete

@@ -1,0 +1,239 @@
+﻿@page "/GameNotes"
+@using CluedoNotes.Data
+@inject PlayerService PlayerService
+@inject CardService CardService
+<h1>Players</h1>
+<p style="color:red">@Error</p>
+@if (players == null && cards == null)
+{
+    <!-- Show this if the current user has no data... yet... -->
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <!-- Show the forecasts for the current user -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Held Cards</th>
+                <th>Possible Cards</th>
+                @* <th>IsWeapon</th> *@
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in players)
+            {
+                <tr>
+                    <td>@player.Name</td>
+                    <td>@foreach (var heldCard in player.HeldCards)
+                        {
+                            <div class="nav-item px-3">
+                                <span class="oi oi-document" aria-hidden="true"></span> @heldCard.Id @heldCard.Card.Name @heldCard.Card.CardType
+                            </div>
+                        }
+                    </td>
+                    @* <td>@card.CardType</td> *@
+                    @* <td>asdf1</td>
+                    <td> asdf </td> *@
+                    <td>
+                        <!-- Edit the current card -->
+                        <button class="btn btn-primary"
+                        @onclick="(() => EditPlayerCards(player))">
+                            Edit
+                        </button> 
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p>
+        @* <!-- Add a new card -->
+        <button class="btn btn-success"
+            @onclick="AddNewPlayer">
+            Add New Player
+        </button> *@
+    </p>
+
+}
+
+
+@if (ShowPlayerCardsPopup)
+{
+    <!-- This is the popup to create or edit a forecast -->
+    <div class="modal" tabindex="-1" style="display:block" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Add / Edit Player</h3>
+                    <!-- Button to close the popup -->
+                    <button type="button" class="close"
+                    @onclick="ClosePopup">
+                        <span aria-hidden="true">X</span>
+                    </button>
+                </div>
+                <!-- Edit form for the current forecast -->
+                <div class="modal-body">
+                    <h4 type="text" >@objPlayer.Name</h4>
+                    @* <InputSelect class="form-control" Value=" "> *@
+                        @foreach (var objCard in cards)
+                        {
+                            <div class="">@objCard.Id @objCard.Name</div>
+                        if (true)
+                        {
+                            <button class="btn btn-success"
+                            @onclick="(() => CardSeen(objCard))">
+                                CardSeen
+                            </button>
+                        }
+                    }
+                    @* </InputSelect> *@
+                    @* <input class="form-control" type="text"
+                           placeholder="Fahrenheit forecast"
+                    @bind="objWeatherForecast.TemperatureF" /> *@
+                    @* <input class="form-control" type="text"
+                           placeholder="Summary"
+                    @bind="objWeatherForecast.Summary" /> *@
+                    <br />
+                    <!-- Button to save the forecast -->
+                    <button class="btn btn-success"
+                    @onclick="SaveCard">
+                        Save
+                    </button>&nbsp;
+                    <!-- Only show delete button if not a new record -->
+@*                     @if (Card.Id > 0)
+                    {
+                        <!-- Button to delete the forecast -->
+                        <button class="btn btn-danger"
+                        @onclick="DeleteCard">
+                            Delete
+                        </button>
+                    } *@
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code
+{
+    string Error = "";
+    List<Player> players = new List<Player>();
+    List<Card> cards = new List<Card>();
+    Player objPlayer = new Player();
+    bool ShowPlayerCardsPopup = false;
+    protected override async Task OnInitializedAsync()
+    {
+        // Get the forecasts
+        players = await PlayerService.GetPlayersAsync();
+        cards = await CardService.GetCardsAsync();
+    }
+    // void AddNewPlayer()
+    // {
+    //     // Make new forecast
+    //     objPlayer = new Player();
+    //     // Set Id to 0 so we know it is a new record
+    //     objPlayer.Id = 0;
+    //     // Open the Popup
+    //     ShowPlayerPopup = true;
+    // }
+    void EditPlayerCards(Player player)
+    {
+        // Set the selected forecast
+        // as the current forecast
+        objPlayer = player;
+        // Open the Popup
+        ShowPlayerCardsPopup = true;
+    }
+
+    void ClosePopup()
+    {
+        // Close the Popup
+        ShowPlayerCardsPopup = false;
+    }
+    async Task CardSeen(Card objCard)
+    {
+        try
+        {
+
+
+            if (objPlayer.HeldCards.Where(c => c.CardId == objCard.Id).Any())
+            {
+                objPlayer.HeldCards.Single(c => c.CardId == objCard.Id).IsConfirmed = true;
+
+            }
+            else
+            {
+                objPlayer.HeldCards.Add(new HeldCard()
+                    {
+                        Card = objCard,
+                        CardId = objCard.Id,
+                        PlayerId = objPlayer.Id,
+                        IsConfirmed = true
+                    });
+            }
+            await PlayerService.UpdatePlayerCardsAsync(objPlayer);
+        }
+        catch (Exception ex)
+        {
+            Error = ex.Message;
+        }
+    }
+    async Task SaveCard()
+    {
+        // Close the Popup
+        ShowPlayerCardsPopup = false;
+        Error = "";
+        try
+        {
+            // A new forecast will have the Id set to 0
+            if (objPlayer.Id == 0)
+            {
+                // Create new forecast
+                // Player objNewPlayer = new Player();
+                // objNewPlayer.Name = objCard.Name;
+                // objNewPlayer.CardType = objCard.CardType;
+                // objNewWeatherForecast.Summary = objWeatherForecast.Summary;
+                // objNewWeatherForecast.TemperatureC =
+                // Convert.ToInt32(objWeatherForecast.TemperatureC);
+                // objNewWeatherForecast.TemperatureF =
+                // Convert.ToInt32(objWeatherForecast.TemperatureF);
+                // Save the result
+                var newPlayer =
+                    await PlayerService.CreatePlayerAsync(objPlayer);
+                // Add the Forcast
+                players.Add(newPlayer);
+            }
+            else
+            {
+                //This is an update
+                await PlayerService.UpdatePlayerAsync(objPlayer);
+            }
+        }
+        catch (Exception ex)
+        {
+            Error = ex.Message;
+        }
+    }
+
+
+    async Task DeleteCard()
+    {
+        // Close the Popup
+        ShowPlayerCardsPopup = false;
+        try
+        {
+            Error = "";
+            // Delete the forecast
+            await PlayerService.DeletePlayerAsync(objPlayer);
+            // Remove the Forcast
+            players.Remove(objPlayer);
+        }
+        catch (Exception ex)
+        {
+            Error = ex.Message;
+        }
+    }
+}

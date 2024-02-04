@@ -1,4 +1,6 @@
 ﻿using SQLite;
+using SQLiteNetExtensions.Attributes;
+
 
 namespace CluedoNotes.Data
 {
@@ -10,8 +12,8 @@ namespace CluedoNotes.Data
         [MaxLength(255), Unique]
         public string Name { get; set; }
 
-        //[OneToMany(CascadeOperations = CascadeOperation.All)]
-        //public List<HeldCard> HeldCards { get; set; } = new List<HeldCard>();
+        [OneToMany(nameof(HeldCard), CascadeOperations = CascadeOperation.CascadeRead)]
+        public List<HeldCard> HeldCards { get; set; } = new List<HeldCard>();
 
     }
 }

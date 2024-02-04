@@ -1,6 +1,6 @@
 ﻿
 namespace CluedoNotes.Data;
-public class PlayerService
+public class GameNotesService
 {
     public string StatusMessage { get; set; }
     
@@ -18,18 +18,10 @@ public class PlayerService
     }
     public async Task<Player> UpdatePlayerAsync(Player player)
     {
-            // Update
-            await App._dbService.UpdatePlayerAsync(player);
-            // Return the updated object
-            return player;
-    }
-
-    public async Task<Player> UpdatePlayerCardsAsync(Player player)
-    {
         try
         {
             // Update
-            await App._dbService.UpdatePlayerCardsAsync(player);
+            await App._dbService.UpdatePlayerAsync(player);
             // Return the updated object
             return player;
         }
