@@ -26,7 +26,15 @@ else
             {
                 <tr>
                     <td>@player.Name</td>
-                    @* <td>@card.CardType</td> *@
+                    <td>
+                        @if (player.HeldCards != null)
+                            @foreach (var heldCard in player.HeldCards.Where(c => c.IsConfirmed))
+                            {
+                                <div class="nav-item px-3">
+                                    <span class="oi oi-document" aria-hidden="true"></span> @heldCard.Id @heldCard.Card.Name @heldCard.Card.CardType
+                                </div>
+                            }
+                    </td>
                     @* <td>asdf1</td>
                     <td> asdf </td> *@
                     <td>

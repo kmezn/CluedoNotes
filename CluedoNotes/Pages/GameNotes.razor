@@ -15,45 +15,63 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Held Cards</th>
-                <th>Possible Cards</th>
+                <th> </th>
+                <th> </th>
+                @foreach (var player  in players)
+                {
+                    <th>@player.Name</th>
+                }
+@*                 <th>Held Cards</th>
+                <th>Possible Cards</th> *@
                 @* <th>IsWeapon</th> *@
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var player in players)
+            @foreach (var card in cards.OrderBy(o => o.CardType).ThenBy(t => t.Name))
             {
+                if (card.CardType != _prevCardType)
+                {
+                    _prevCardType = card.CardType;
+                    <tr><th>@card.CardType.ToString()</th></tr>
+                }
                 <tr>
-                    <td>@player.Name</td>
-                    <td>@foreach (var heldCard in player.HeldCards)
-                        {
-                            <div class="nav-item px-3">
-                                <span class="oi oi-document" aria-hidden="true"></span> @heldCard.Id @heldCard.Card.Name @heldCard.Card.CardType
-                            </div>
-                        }
-                    </td>
+                    <td> </td>
+                    <td>@* @card.CardType<br /> *@
+                        @card.Name</td>
+                    @foreach (var player in players)
+                    {
+                        <td>
+                            @{
+                                var playerHeldCards = player.HeldCards.Where(w => w.CardId == card.Id);
+                                if (playerHeldCards.Any(a => a.IsConfirmed))
+                                {
+                                    <span class="oi oi-check oi-bold align-self-center" alt="Confirmed" style="color:green"></span>
+                                }
+                                
+                            }
+                        </td>
+                    }
                     @* <td>@card.CardType</td> *@
                     @* <td>asdf1</td>
                     <td> asdf </td> *@
                     <td>
                         <!-- Edit the current card -->
-                        <button class="btn btn-primary"
+                        @* <button class="btn btn-primary"
                         @onclick="(() => EditPlayerCards(player))">
                             Edit
-                        </button> 
+                        </button>  *@
                     </td>
                 </tr>
             }
         </tbody>
     </table>
     <p>
-        @* <!-- Add a new card -->
+        <!-- Add a new card -->
         <button class="btn btn-success"
-            @onclick="AddNewPlayer">
-            Add New Player
-        </button> *@
+        @onclick="AddNewSeenCardEvent">
+            Add Seen Card Event
+        </button>
     </p>
 
 }
@@ -66,7 +84,7 @@ else
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Add / Edit Player</h3>
+                    <h3 class="modal-title">Seen a Card or just think you have?</h3>
                     <!-- Button to close the popup -->
                     <button type="button" class="close"
                     @onclick="ClosePopup">
@@ -76,7 +94,13 @@ else
                 <!-- Edit form for the current forecast -->
                 <div class="modal-body">
                     <h4 type="text" >@objPlayer.Name</h4>
-                    @* <InputSelect class="form-control" Value=" "> *@
+                    <InputSelect class="form-control" @bind-Value="objPlayer.Id">
+                        <option value="0">Select a Player</option>
+                        @foreach (var p in players)
+                        {
+                            <option value="@p.Id">@p.Name</option>
+                        }
+                    </InputSelect>
                         @foreach (var objCard in cards)
                         {
                             <div class="">@objCard.Id @objCard.Name</div>
@@ -123,6 +147,7 @@ else
     List<Player> players = new List<Player>();
     List<Card> cards = new List<Card>();
     Player objPlayer = new Player();
+    CardType _prevCardType = CardType.Weapon;
     bool ShowPlayerCardsPopup = false;
     protected override async Task OnInitializedAsync()
     {
@@ -130,15 +155,15 @@ else
         players = await PlayerService.GetPlayersAsync();
         cards = await CardService.GetCardsAsync();
     }
-    // void AddNewPlayer()
-    // {
-    //     // Make new forecast
-    //     objPlayer = new Player();
-    //     // Set Id to 0 so we know it is a new record
-    //     objPlayer.Id = 0;
-    //     // Open the Popup
-    //     ShowPlayerPopup = true;
-    // }
+    void AddNewSeenCardEvent()
+    {
+        // Make new forecast
+        objPlayer = new Player();
+        // Set Id to 0 so we know it is a new record
+        objPlayer.Id = 0;
+        // Open the Popup
+        ShowPlayerCardsPopup = true;
+    }
     void EditPlayerCards(Player player)
     {
         // Set the selected forecast

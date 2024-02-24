@@ -107,10 +107,25 @@ public class DBService
         var players = await conn.Table<Player>().ToListAsync();
         foreach (var player in players)
         {
-            player.HeldCards = await conn.Table<HeldCard>().ToListAsync();
+            player.HeldCards = await conn.Table<HeldCard>()
+                .Where(w => w.PlayerId == player.Id)
+                .ToListAsync();
+            if (player.HeldCards.Any())
+                await FetchPlayerHeldCards(player);
         }
 
         return players;
+    }
+
+    public async Task<Player> FetchPlayerHeldCards(Player player)
+    {
+        //****** would it be better to have cards and players stored as _players and _cards? ******
+        var allCards = await conn.Table<Card>().ToListAsync();
+        foreach (var card in player.HeldCards)
+        {
+            card.Card = allCards.First(f => f.Id == card.CardId);
+        }
+        return player;
     }
     public async Task<Player> CreatePlayerAsync(Player player)
     {
