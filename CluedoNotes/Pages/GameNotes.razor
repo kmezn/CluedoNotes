@@ -3,8 +3,8 @@
 @inject PlayerService PlayerService
 @inject CardService CardService
 <h1>Players</h1>
-<p style="color:red">@Error</p>
-@if (players == null && cards == null)
+<p style="color:red">@_Error</p>
+@if (_Players == null && _Cards == null)
 {
     <!-- Show this if the current user has no data... yet... -->
     <p><em>Loading...</em></p>
@@ -17,7 +17,7 @@ else
             <tr>
                 <th> </th>
                 <th> </th>
-                @foreach (var player  in players)
+                @foreach (var player  in _Players)
                 {
                     <th>@player.Name</th>
                 }
@@ -28,7 +28,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var card in cards.OrderBy(o => o.CardType).ThenBy(t => t.Name))
+            @foreach (var card in _Cards.OrderBy(o => o.CardType).ThenBy(t => t.Name))
             {
                 if (card.CardType != _prevCardType)
                 {
@@ -39,7 +39,7 @@ else
                     <td> </td>
                     <td>@* @card.CardType<br /> *@
                         @card.Name</td>
-                    @foreach (var player in players)
+                    @foreach (var player in _Players)
                     {
                         <td>
                             @{
@@ -47,21 +47,16 @@ else
                                 if (playerHeldCards.Any(a => a.IsConfirmed))
                                 {
                                     <span class="oi oi-check oi-bold align-self-center" alt="Confirmed" style="color:green"></span>
+                                } 
+                                <div class="lowerCheckArea">
+                                @foreach (var eventId in @playerHeldCards.Where(w => !w.IsConfirmed).Select(s => s.EventId))
+                                {
+                                    <span style="border: 1px solid green;margin: 2px;">@eventId</span>
                                 }
-                                
+                                </div>
                             }
                         </td>
                     }
-                    @* <td>@card.CardType</td> *@
-                    @* <td>asdf1</td>
-                    <td> asdf </td> *@
-                    <td>
-                        <!-- Edit the current card -->
-                        @* <button class="btn btn-primary"
-                        @onclick="(() => EditPlayerCards(player))">
-                            Edit
-                        </button>  *@
-                    </td>
                 </tr>
             }
         </tbody>
@@ -70,21 +65,34 @@ else
         <!-- Add a new card -->
         <button class="btn btn-success"
         @onclick="AddNewSeenCardEvent">
-            Add Seen Card Event
+            Add Confirmed Card Seen Event
+        </button>
+        <button class="btn btn-info"
+        @onclick="AddNewCardGuessEvent">
+            Add Card Guess Event
         </button>
     </p>
 
 }
 
 
-@if (ShowPlayerCardsPopup)
+@if (_ShowPlayerCardsPopup)
 {
     <!-- This is the popup to create or edit a forecast -->
     <div class="modal" tabindex="-1" style="display:block" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Seen a Card or just think you have?</h3>
+                    <h3 class="modal-title">
+                        @if (_IsCardConfirmed)
+                        {
+                            <span>Card Seen! (select the card below)</span>
+                        } else
+                        {
+                            <span>Someone else saw a card! (select the cards that were possibly shown)</span>
+                        }
+                    </h3>
+                    <p style="color:red">@_Error</p>
                     <!-- Button to close the popup -->
                     <button type="button" class="close"
                     @onclick="ClosePopup">
@@ -93,47 +101,54 @@ else
                 </div>
                 <!-- Edit form for the current forecast -->
                 <div class="modal-body">
-                    <h4 type="text" >@objPlayer.Name</h4>
-                    <InputSelect class="form-control" @bind-Value="objPlayer.Id">
-                        <option value="0">Select a Player</option>
-                        @foreach (var p in players)
+                    <h4 type="text">@_objPlayer.Name</h4>
+                    <InputSelect id="SelectedPlayerId" class="form-control" @bind-Value="_objPlayer.Id">
+                    <option value="0">Select a Player</option>
+                        @foreach (var p in _Players)
                         {
                             <option value="@p.Id">@p.Name</option>
                         }
                     </InputSelect>
-                        @foreach (var objCard in cards)
+                    @if (_objPlayer.Id != 0)
+                        if(_IsCardConfirmed)
                         {
-                            <div class="">@objCard.Id @objCard.Name</div>
-                        if (true)
+                            <div class="hiddenIfPlayer0">
+                                @foreach (var objCard in _Cards.OrderBy(o => o.CardType).ThenBy(t => t.Name))
+                                {
+                                    if (objCard.CardType != _prevCardType)
+                                    {
+                                        _prevCardType = objCard.CardType;
+                                        <h4>@objCard.CardType.ToString()</h4>
+                                    }
+                                    <button class="btn btn-info" style="margin:5px;"
+                                    @onclick="(() => CardSeen(objCard))">
+                                        @objCard.Name
+                                    </button>
+                                }
+                            </div>
+                        } else
                         {
-                            <button class="btn btn-success"
-                            @onclick="(() => CardSeen(objCard))">
-                                CardSeen
-                            </button>
+                            <div class="hiddenIfPlayer0">
+                                @* // Modal for a card guess (i.e. card shown to someone else and unsure which one.) *@
+                                @foreach (var objCard in _Cards.OrderBy(o => o.CardType).ThenBy(t => t.Name))
+                                {
+                                    if (objCard.CardType != _prevCardType)
+                                    {
+                                        _prevCardType = objCard.CardType;
+                                        <h4>@objCard.CardType.ToString()</h4>
+                                    }
+                                    <label>@objCard.Name
+                                    <InputCheckbox class="" style="margin:5px;"
+                                        @bind-Value="objCard.Selected" ></InputCheckbox>
+                                    </label>
+                                }
+                                <br />
+                                <button class="btn btn-success"
+                                @onclick="SaveCardGuess">
+                                    Save
+                                </button>
+                            </div>
                         }
-                    }
-                    @* </InputSelect> *@
-                    @* <input class="form-control" type="text"
-                           placeholder="Fahrenheit forecast"
-                    @bind="objWeatherForecast.TemperatureF" /> *@
-                    @* <input class="form-control" type="text"
-                           placeholder="Summary"
-                    @bind="objWeatherForecast.Summary" /> *@
-                    <br />
-                    <!-- Button to save the forecast -->
-                    <button class="btn btn-success"
-                    @onclick="SaveCard">
-                        Save
-                    </button>&nbsp;
-                    <!-- Only show delete button if not a new record -->
-@*                     @if (Card.Id > 0)
-                    {
-                        <!-- Button to delete the forecast -->
-                        <button class="btn btn-danger"
-                        @onclick="DeleteCard">
-                            Delete
-                        </button>
-                    } *@
                 </div>
             </div>
         </div>
@@ -143,103 +158,97 @@ else
 
 @code
 {
-    string Error = "";
-    List<Player> players = new List<Player>();
-    List<Card> cards = new List<Card>();
-    Player objPlayer = new Player();
+    string _Error = "";
+    List<Player> _Players = new List<Player>();
+    List<Card> _Cards = new List<Card>();
+    Player _objPlayer = new Player();
     CardType _prevCardType = CardType.Weapon;
-    bool ShowPlayerCardsPopup = false;
+    bool _ShowPlayerCardsPopup = false;
+    bool _IsCardConfirmed = true;
     protected override async Task OnInitializedAsync()
     {
         // Get the forecasts
-        players = await PlayerService.GetPlayersAsync();
-        cards = await CardService.GetCardsAsync();
+        _Players = await PlayerService.GetPlayersAsync();
+        _Cards = await CardService.GetCardsAsync();
     }
+
     void AddNewSeenCardEvent()
     {
         // Make new forecast
-        objPlayer = new Player();
+        _objPlayer = new Player();
         // Set Id to 0 so we know it is a new record
-        objPlayer.Id = 0;
-        // Open the Popup
-        ShowPlayerCardsPopup = true;
+        _objPlayer.Id = 0;
+        // Open the Popup for confirmed cards. 
+        _IsCardConfirmed = true;
+        _ShowPlayerCardsPopup = true;
+    }
+
+    void AddNewCardGuessEvent()
+    {
+        // Make new forecast
+        _objPlayer = new Player();
+        // Set Id to 0 so we know it is a new record
+        _objPlayer.Id = 0;
+        // Open the Popup for a guess event. 
+        _IsCardConfirmed = false;
+        _ShowPlayerCardsPopup = true;
     }
     void EditPlayerCards(Player player)
     {
         // Set the selected forecast
         // as the current forecast
-        objPlayer = player;
+        _objPlayer = player;
         // Open the Popup
-        ShowPlayerCardsPopup = true;
+        _ShowPlayerCardsPopup = true;
     }
 
     void ClosePopup()
     {
-        // Close the Popup
-        ShowPlayerCardsPopup = false;
+        string _Error = "";
+        _ShowPlayerCardsPopup = false;
     }
     async Task CardSeen(Card objCard)
     {
         try
         {
-
-
-            if (objPlayer.HeldCards.Where(c => c.CardId == objCard.Id).Any())
+            if (_objPlayer.HeldCards.Where(c => c.CardId == objCard.Id).Any())
             {
-                objPlayer.HeldCards.Single(c => c.CardId == objCard.Id).IsConfirmed = true;
+                _objPlayer.HeldCards.Single(c => c.CardId == objCard.Id).IsConfirmed = true;
 
             }
             else
             {
-                objPlayer.HeldCards.Add(new HeldCard()
+                _objPlayer.HeldCards.Add(new HeldCard()
                     {
                         Card = objCard,
                         CardId = objCard.Id,
-                        PlayerId = objPlayer.Id,
+                        PlayerId = _objPlayer.Id,
                         IsConfirmed = true
                     });
             }
-            await PlayerService.UpdatePlayerCardsAsync(objPlayer);
+            await PlayerService.UpdatePlayerCardsAsync(_objPlayer);
+
+            // ToDo need to set up event for updating the current view model!
+            ClosePopup();
         }
         catch (Exception ex)
         {
-            Error = ex.Message;
+            _Error = ex.Message;
         }
     }
-    async Task SaveCard()
+    async Task SaveCardGuess() //ToDo change to being an event for guessing at a card.
     {
         // Close the Popup
-        ShowPlayerCardsPopup = false;
-        Error = "";
+        _ShowPlayerCardsPopup = false;
+        _Error = "";
         try
         {
-            // A new forecast will have the Id set to 0
-            if (objPlayer.Id == 0)
-            {
-                // Create new forecast
-                // Player objNewPlayer = new Player();
-                // objNewPlayer.Name = objCard.Name;
-                // objNewPlayer.CardType = objCard.CardType;
-                // objNewWeatherForecast.Summary = objWeatherForecast.Summary;
-                // objNewWeatherForecast.TemperatureC =
-                // Convert.ToInt32(objWeatherForecast.TemperatureC);
-                // objNewWeatherForecast.TemperatureF =
-                // Convert.ToInt32(objWeatherForecast.TemperatureF);
-                // Save the result
                 var newPlayer =
-                    await PlayerService.CreatePlayerAsync(objPlayer);
-                // Add the Forcast
-                players.Add(newPlayer);
-            }
-            else
-            {
-                //This is an update
-                await PlayerService.UpdatePlayerAsync(objPlayer);
-            }
+                    await CardService.CreateHeldCardGuess(_objPlayer.Id, _Cards.Where(w => w.Selected).ToList());
         }
         catch (Exception ex)
         {
-            Error = ex.Message;
+            _Error = ex.Message;
         }
     }
 
@@ -247,18 +256,18 @@ else
     async Task DeleteCard()
     {
         // Close the Popup
-        ShowPlayerCardsPopup = false;
+        _ShowPlayerCardsPopup = false;
         try
         {
-            Error = "";
+            _Error = "";
             // Delete the forecast
-            await PlayerService.DeletePlayerAsync(objPlayer);
+            await PlayerService.DeletePlayerAsync(_objPlayer);
             // Remove the Forcast
-            players.Remove(objPlayer);
+            _Players.Remove(_objPlayer);
         }
         catch (Exception ex)
         {
-            Error = ex.Message;
+            _Error = ex.Message;
         }
     }
 }

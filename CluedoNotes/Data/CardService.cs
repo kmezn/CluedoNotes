@@ -27,4 +27,11 @@ public class CardService
         await App._dbService.DeleteCardAsync(card);
         return card;
     }
+    public async Task<Player> CreateHeldCardGuess(int playerId, List<Card> cards)
+    {
+        if (playerId == 0)
+            throw new Exception("Player not specified");
+
+        return await App._dbService.CreateHeldCardGuess(playerId, cards);
+    }
 }

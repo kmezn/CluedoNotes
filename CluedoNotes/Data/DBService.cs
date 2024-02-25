@@ -161,7 +161,34 @@ public class DBService
         // Return the updated object
         return player;
     }
-    
+
+    public async Task<Player> CreateHeldCardGuess(int playerId, List<Card> cards)
+    {
+        var player = await conn.Table<Player>().FirstAsync(w => w.Id == playerId);
+            player.HeldCards = await conn.Table<HeldCard>()
+                .Where(w => w.PlayerId == player.Id)
+                .ToListAsync();
+
+        var heldId = conn.Table<HeldCard>().OrderByDescending(o => o.EventId).FirstAsync().Result.EventId;
+        heldId++;
+
+        foreach (var card in cards)
+        {
+            var c = new HeldCard()
+            {
+                CardId = card.Id,
+                EventId = heldId,
+                IsConfirmed = false,
+                PlayerId = playerId,
+            };
+            await conn.InsertAsync(c);
+            player.HeldCards.Add(c);
+        }
+
+        return player;
+    }
+
+
 
     public async Task<Player> DeletePlayerAsync(Player player)
     {

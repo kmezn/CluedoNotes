@@ -28,6 +28,8 @@ public class PlayerService
     {
         try
         {
+            if (player.Id == 0)
+                throw new Exception("Player not specified");
             // Update
             await App._dbService.UpdatePlayerCardsAsync(player);
             // Return the updated object
@@ -39,6 +41,8 @@ public class PlayerService
             throw;
         }
     }
+
+
     public async Task<Player> DeletePlayerAsync(Player player)
     {
         // Delete

@@ -1,5 +1,6 @@
 ﻿using SQLite;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CluedoNotes.Data;
 
@@ -29,6 +30,9 @@ public class Card
     }
     [EnumDataType(typeof(CardType))]
     public CardType CardType { get; set; }
+
+    [NotMapped]
+    public bool Selected { get; set; }
 }
 
 

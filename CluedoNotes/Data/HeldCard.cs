@@ -22,6 +22,6 @@ namespace CluedoNotes.Data
         public Player Player { get; set; }
 
         public bool IsConfirmed { get; set; }
-        //public int PotentialCardEventNo { get; set; }
+        public int EventId { get; set; }
     }
 }
