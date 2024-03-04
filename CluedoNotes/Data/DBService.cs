@@ -19,10 +19,21 @@ public class DBService
         conn = new SQLiteAsyncConnection(_dbPath);
 
         await conn.CreateTableAsync<Card>();
-        CreateTableResult createTableResult1 = await conn.CreateTableAsync<Player>();
-        CreateTableResult createTableResult = await conn.CreateTableAsync<HeldCard>();
+        await conn.CreateTableAsync<Player>();
+        await conn.CreateTableAsync<HeldCard>();
+        await conn.CreateTableAsync<Settings>();
+
 
 #if DEBUG
+        // possibly move out of debug?
+        var defaultSettings = new Settings()
+        {
+            Theme = AppTheme.Dark,
+            DefaultTickColour = TickColour.Green,
+        };
+        await UpdateSettingsAsync(defaultSettings);
+
+
         var debugCards = new List<Card>()
         {
             new Card(){Name ="Miss Scarlett", CardType = CardType.Suspect },
@@ -59,6 +70,8 @@ public class DBService
 
         debugCards.Where(c => !cards.Any(a => a.Name == c.Name)).ToList().ForEach(async r => await CreateCardAsync(r));
         debugPlayers.Where(c => !players.Any(a => a.Name == c.Name)).ToList().ForEach(async p => await CreatePlayerAsync(p));
+
+
 
         
 
@@ -127,6 +140,21 @@ public class DBService
         }
         return player;
     }
+
+    public async Task<List<HeldCard>> FetchAllHeldCards()
+    {
+        var allCards = await conn.Table<Card>().ToListAsync();
+        var players = await conn.Table<Player>().ToListAsync();
+        var allHeldCards = await conn.Table<HeldCard>().ToListAsync();
+        foreach(var heldCard in allHeldCards)
+        {
+            heldCard.Card = allCards.First(c => c.Id == heldCard.CardId);
+            heldCard.Player = players.First(p => p.Id == heldCard.PlayerId);
+        }
+
+        return allHeldCards;
+    }
+
     public async Task<Player> CreatePlayerAsync(Player player)
     {
         // Insert
@@ -162,7 +190,7 @@ public class DBService
         return player;
     }
 
-    public async Task<Player> CreateHeldCardGuess(int playerId, List<Card> cards)
+    public async Task<Player> CreateHeldCardGuess(int playerId, List<Card> cards, TickColour tickColour)
     {
         var player = await conn.Table<Player>().FirstAsync(w => w.Id == playerId);
             player.HeldCards = await conn.Table<HeldCard>()
@@ -180,6 +208,7 @@ public class DBService
                 EventId = heldId,
                 IsConfirmed = false,
                 PlayerId = playerId,
+                TickColour = tickColour,
             };
             await conn.InsertAsync(c);
             player.HeldCards.Add(c);
@@ -188,12 +217,31 @@ public class DBService
         return player;
     }
 
-
-
     public async Task<Player> DeletePlayerAsync(Player player)
     {
         // Delete
         await conn.DeleteAsync(player);
         return player;
     }
+
+    public async Task<Settings> GetSettingsAsync()
+    { // probably the initial landing page... 
+        await InitAsync();
+        return await conn.Table<Settings>().FirstAsync();
+    }
+    public async Task<Settings> UpdateSettingsAsync(Settings settings)
+    {
+        if (settings.Id == 0)
+        {
+            await conn.InsertAsync(settings);
+        }
+        else
+        {
+            await conn.UpdateAsync(settings);
+        }
+
+        // Return the updated object
+        return settings;
+    }
+
 }

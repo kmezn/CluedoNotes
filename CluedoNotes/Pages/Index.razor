@@ -1,9 +1,72 @@
 ﻿@page "/"
+@using CluedoNotes.Data
+@inject PlayerService PlayerService
 
 <h1>Cluedo Notes</h1>
 
 Setup your Players and Cards before playing. 
 
-May add some links to do auto setup for games versions here:
+<h2>App Settings</h2>
+<div class="form-control">
+    <ul>
+        <li>
+            Dark/Light mode.
+            <InputSelect class="form-control" @bind-Value="@_settings.Theme">
+                @foreach (var type in Enum.GetValues(typeof(AppTheme)))
+                {
+                    <option value="@type">@type</option>
+                }
+            </InputSelect>
+        </li>
+        <li>
+            default tick colour:
+            <InputSelect class="form-control" @bind-Value="@_settings.DefaultTickColour">
+                @foreach (var type in Enum.GetValues(typeof(TickColour)))
+                {
+                    <option value="@type">@type</option>
+                }
+            </InputSelect>
+        </li>
+        <li>
+            <button class="btn btn-success"
+            @onclick="SaveSettings">
+                Save
+            </button>
+        </li>
+        <li>
+            reset data for next games (keeps cards and player names. removed all event History and Held Cards.)
+            <button> Reset!</button>
+        </li>
+        <li>
+            Some other settings???
+        </li>
+        <li>
+            May add some links to do auto setup for games versions here:
+        </li>
+
+    </ul>
+</div>
+
+
+
 
 @* <SurveyPrompt Title="How is Blazor working for you?" /> *@
+@code
+{
+    string _error = "";
+    Settings _settings = new Settings();
+    bool _showPlayerPopup = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get the forecasts
+        _settings = await PlayerService.GetSettingsAsync();
+
+    }
+
+    async Task SaveSettings()
+    {
+        _settings = await PlayerService.UpdateSettingsAsync(_settings);
+    }
+
+}

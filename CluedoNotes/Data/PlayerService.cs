@@ -42,11 +42,20 @@ public class PlayerService
         }
     }
 
-
     public async Task<Player> DeletePlayerAsync(Player player)
     {
         // Delete
         await App._dbService.DeletePlayerAsync(player);     
         return player;
+    }
+
+    public async Task<Settings> GetSettingsAsync()
+    {
+        return await App._dbService.GetSettingsAsync();
+    }
+
+    public async Task<Settings> UpdateSettingsAsync(Settings settings)
+    {
+        return await App._dbService.UpdateSettingsAsync(settings);
     }
 }

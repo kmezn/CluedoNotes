@@ -1,0 +1,77 @@
+﻿@page "/eventHistory"
+
+@using CluedoNotes.Data
+@inject CardService CardService
+
+<h1>Event History</h1>
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (_heldCards == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Log Id</th>
+                <th>Card Type</th>
+                <th>Card Name</th>
+                <th>Guess Event Id</th>
+                <th>Held by</th>
+                <th>Actions:</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var heldCard in _heldCards)
+            {
+                <tr>
+                    <td>@heldCard.Id</td>
+                    <td>
+                        @switch (heldCard.Card.CardType)
+                        {
+                            case CardType.Room:
+                                <span class="oi oi-flag" aria-hidden="true"></span>
+                                break;
+                            case CardType.Suspect:
+                                <span class="oi oi-person" aria-hidden="true"></span>
+                                break;
+                            case CardType.Weapon:
+                                <span class="oi oi-tag" aria-hidden="true"></span>
+                                break;
+                            default:
+                                <span class="oi oi-question-mark" aria-hidden="true"></span>
+                                break;
+                        }
+                        @heldCard.Card.CardType
+                    </td>
+                    <td>@heldCard.Card.Name</td>
+                    <td>
+                        @if(heldCard.IsConfirmed){
+                            <span class="oi oi-check oi-bold align-self-center" alt="Confirmed" style="color:@heldCard.TickColour.ToString()"></span>
+                        }
+                        @if (!heldCard.IsConfirmed){
+                            <span style="border: 2px solid @heldCard.TickColour.ToString();margin: 2px;">@heldCard.EventId</span>
+                        }
+
+                    
+                    </td>
+                    <td>@heldCard.Player.Name</td>
+                    @* Possibly add the additional option to change colour or edit past events.  *@
+                    <td><button>Delete!</button></td>
+                    @* // delete with confirmation *@ 
+                    @* - probably should offer to remove all entries when an eventId is shared by other events *@
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<HeldCard> _heldCards = new List<HeldCard>();
+    protected override async Task OnInitializedAsync()
+    {
+        _heldCards = await CardService.GetHeldCardsAsync();
+    }
+}

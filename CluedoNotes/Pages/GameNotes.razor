@@ -44,14 +44,14 @@ else
                         <td>
                             @{
                                 var playerHeldCards = player.HeldCards.Where(w => w.CardId == card.Id);
-                                if (playerHeldCards.Any(a => a.IsConfirmed))
+                                @foreach (var heldEvent in @playerHeldCards.Where(w => w.IsConfirmed))
                                 {
-                                    <span class="oi oi-check oi-bold align-self-center" alt="Confirmed" style="color:green"></span>
+                                    <span class="oi oi-check oi-bold align-self-center" alt="Confirmed" style="color:@heldEvent.TickColour.ToString()"></span>
                                 } 
                                 <div class="lowerCheckArea">
-                                @foreach (var eventId in @playerHeldCards.Where(w => !w.IsConfirmed).Select(s => s.EventId))
+                                @foreach (var heldEvent in @playerHeldCards.Where(w => !w.IsConfirmed))
                                 {
-                                    <span style="border: 1px solid green;margin: 2px;">@eventId</span>
+                                        <span style="border: 2px solid @heldEvent.TickColour.ToString();margin: 2px;">@heldEvent.EventId</span>
                                 }
                                 </div>
                             }
@@ -113,6 +113,12 @@ else
                         if(_IsCardConfirmed)
                         {
                             <div class="hiddenIfPlayer0">
+                                <InputSelect class="form-control" @bind-Value="_cardTickColour">
+                                    @foreach (var type in Enum.GetValues(typeof(TickColour)))
+                                    {
+                                        <option value="@type">@type</option>
+                                    }
+                                </InputSelect>
                                 @foreach (var objCard in _Cards.OrderBy(o => o.CardType).ThenBy(t => t.Name))
                                 {
                                     if (objCard.CardType != _prevCardType)
@@ -121,7 +127,7 @@ else
                                         <h4>@objCard.CardType.ToString()</h4>
                                     }
                                     <button class="btn btn-info" style="margin:5px;"
-                                    @onclick="(() => CardSeen(objCard))">
+                                    @onclick="(() => CardSeen(objCard, _cardTickColour))">
                                         @objCard.Name
                                     </button>
                                 }
@@ -142,6 +148,12 @@ else
                                         @bind-Value="objCard.Selected" ></InputCheckbox>
                                     </label>
                                 }
+                                <InputSelect class="form-control" @bind-Value="_cardTickColour">
+                                    @foreach (var type in Enum.GetValues(typeof(TickColour)))
+                                    {
+                                        <option value="@type">@type</option>
+                                    }
+                                </InputSelect>
                                 <br />
                                 <button class="btn btn-success"
                                 @onclick="SaveCardGuess">
@@ -162,14 +174,18 @@ else
     List<Player> _Players = new List<Player>();
     List<Card> _Cards = new List<Card>();
     Player _objPlayer = new Player();
+    Settings _settings = new Settings();
     CardType _prevCardType = CardType.Weapon;
     bool _ShowPlayerCardsPopup = false;
     bool _IsCardConfirmed = true;
+    TickColour _cardTickColour;
     protected override async Task OnInitializedAsync()
     {
         // Get the forecasts
         _Players = await PlayerService.GetPlayersAsync();
         _Cards = await CardService.GetCardsAsync();
+        _settings = await PlayerService.GetSettingsAsync();
+        _cardTickColour = _settings.DefaultTickColour;
     }
 
     void AddNewSeenCardEvent()
@@ -207,7 +223,7 @@ else
         string _Error = "";
         _ShowPlayerCardsPopup = false;
     }
-    async Task CardSeen(Card objCard)
+    async Task CardSeen(Card objCard, TickColour _cardTickColour)
     {
         try
         {
@@ -223,13 +239,13 @@ else
                         Card = objCard,
                         CardId = objCard.Id,
                         PlayerId = _objPlayer.Id,
-                        IsConfirmed = true
+                        IsConfirmed = true,
+                        TickColour = _cardTickColour,
                     });
             }
             await PlayerService.UpdatePlayerCardsAsync(_objPlayer);
-
-            // ToDo need to set up event for updating the current view model!
             ClosePopup();
+            OnInitializedAsync();
         }
         catch (Exception ex)
         {
@@ -243,31 +259,14 @@ else
         _Error = "";
         try
         {
-                var newPlayer =
-                    await CardService.CreateHeldCardGuess(_objPlayer.Id, _Cards.Where(w => w.Selected).ToList());
+            var newPlayer =
+                await CardService.CreateHeldCardGuess(_objPlayer.Id, _Cards.Where(w => w.Selected).ToList(), _cardTickColour);
         }
         catch (Exception ex)
         {
             _Error = ex.Message;
         }
-    }
-
-
-    async Task DeleteCard()
-    {
-        // Close the Popup
-        _ShowPlayerCardsPopup = false;
-        try
-        {
-            _Error = "";
-            // Delete the forecast
-            await PlayerService.DeletePlayerAsync(_objPlayer);
-            // Remove the Forcast
-            _Players.Remove(_objPlayer);
-        }
-        catch (Exception ex)
-        {
-            _Error = ex.Message;
-        }
+        ClosePopup();
+        OnInitializedAsync();
     }
 }

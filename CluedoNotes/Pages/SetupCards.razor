@@ -16,8 +16,6 @@ else
             <tr>
                 <th>Name</th>
                 <th>Card Type</th>
-                @* <th>IsRoom</th>
-                <th>IsWeapon</th> *@
                 <th></th>
             </tr>
         </thead>
@@ -26,7 +24,25 @@ else
             {
                 <tr>
                     <td>@card.Name</td>
-                    <td>@card.CardType</td>
+                    
+                    <td>
+                        @switch (card.CardType)
+                        {
+                            case CardType.Room:
+                                <span class="oi oi-flag" aria-hidden="true"></span>
+                                break;
+                            case CardType.Suspect:
+                                <span class="oi oi-person" aria-hidden="true"></span>
+                                break;
+                            case CardType.Weapon:
+                                <span class="oi oi-tag" aria-hidden="true"></span>
+                                break;
+                            default:
+                                <span class="oi oi-question-mark" aria-hidden="true"></span>
+                                break;
+                        }
+                        @card.CardType
+                    </td> 
                     @* <td>asdf1</td>
                     <td> asdf </td> *@
                     <td>

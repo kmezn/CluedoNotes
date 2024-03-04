@@ -8,7 +8,7 @@ namespace CluedoNotes
         public App(DBService db)
         {
             InitializeComponent();
-
+            UserAppTheme = Microsoft.Maui.ApplicationModel.AppTheme.Dark;
             MainPage = new MainPage();
             _dbService = db;
         }
