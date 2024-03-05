@@ -11,20 +11,14 @@
 }
 else
 {
-    <!-- Show the forecasts for the current user -->
-    <table class="table">
+    <table class="table table-fixed">
         <thead>
             <tr>
-                <th> </th>
-                <th> </th>
+                <th class="sticky">@* Card *@</th>
                 @foreach (var player  in _Players)
                 {
-                    <th>@player.Name</th>
+                    <th class="sticky">@player.Name</th>
                 }
-@*                 <th>Held Cards</th>
-                <th>Possible Cards</th> *@
-                @* <th>IsWeapon</th> *@
-                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -36,9 +30,7 @@ else
                     <tr><th>@card.CardType.ToString()</th></tr>
                 }
                 <tr>
-                    <td> </td>
-                    <td>@* @card.CardType<br /> *@
-                        @card.Name</td>
+                    <td>@card.Name</td>
                     @foreach (var player in _Players)
                     {
                         <td>
@@ -244,8 +236,9 @@ else
                     });
             }
             await PlayerService.UpdatePlayerCardsAsync(_objPlayer);
+            await OnInitializedAsync();
             ClosePopup();
-            OnInitializedAsync();
+            
         }
         catch (Exception ex)
         {
@@ -266,7 +259,8 @@ else
         {
             _Error = ex.Message;
         }
+        await OnInitializedAsync(); /* Should rework to not require page refresh???  */
         ClosePopup();
-        OnInitializedAsync();
+        
     }
 }

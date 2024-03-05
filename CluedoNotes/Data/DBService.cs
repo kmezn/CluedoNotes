@@ -3,20 +3,22 @@
 namespace CluedoNotes.Data;
 public class DBService
 {
-    string _dbPath;
     public string StatusMessage { get; set; }
     private SQLiteAsyncConnection conn;
-    public DBService(string dbPath)
+    public DBService()
     {
-        _dbPath = dbPath;
+        // used to pass vars directly but changed to constants in mauiProgram.cs
     }
     private async Task InitAsync()
     {
         // Don't Create database if it exists
         if (conn != null)
             return;
+
+        
         // Create database and Card Table
-        conn = new SQLiteAsyncConnection(_dbPath);
+        conn = new SQLiteAsyncConnection(MauiProgram.DatabasePath, MauiProgram.Flags);
+        //conn = new SQLiteAsyncConnection(_dbPath);
 
         await conn.CreateTableAsync<Card>();
         await conn.CreateTableAsync<Player>();
@@ -226,8 +228,16 @@ public class DBService
 
     public async Task<Settings> GetSettingsAsync()
     { // probably the initial landing page... 
-        await InitAsync();
-        return await conn.Table<Settings>().FirstAsync();
+        try
+        {
+            await InitAsync();
+            return await conn.Table<Settings>().FirstAsync();
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
     }
     public async Task<Settings> UpdateSettingsAsync(Settings settings)
     {

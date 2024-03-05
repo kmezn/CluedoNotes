@@ -51,7 +51,15 @@ public class PlayerService
 
     public async Task<Settings> GetSettingsAsync()
     {
-        return await App._dbService.GetSettingsAsync();
+        try
+        {
+            return await App._dbService.GetSettingsAsync();
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
     }
 
     public async Task<Settings> UpdateSettingsAsync(Settings settings)

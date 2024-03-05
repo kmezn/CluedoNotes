@@ -35,7 +35,11 @@ Setup your Players and Cards before playing.
         </li>
         <li>
             reset data for next games (keeps cards and player names. removed all event History and Held Cards.)
-            <button> Reset!</button>
+            @* <button class="btn btn-info"
+            @onclick="ResetGame"> *@
+            <button>
+                Reset!
+            </button>
         </li>
         <li>
             Some other settings???
@@ -67,6 +71,11 @@ Setup your Players and Cards before playing.
     async Task SaveSettings()
     {
         _settings = await PlayerService.UpdateSettingsAsync(_settings);
+    }
+
+    async Task ResetGame()
+    {
+        // modal to confirm.... then reset event history.... 
     }
 
 }

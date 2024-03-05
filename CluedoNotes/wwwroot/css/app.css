@@ -2,6 +2,8 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color:darkslategrey;
+    color: white;
 }
 
 h1:focus {
@@ -10,6 +12,37 @@ h1:focus {
 
 a, .btn-link {
     color: #0071c1;
+}
+.table {
+    color: white;
+}
+
+.table-fixed {
+    width: 100%;
+}
+
+/*This will work on every browser but Chrome Browser*/
+/*.table-fixed thead {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 999;
+    background-color: #000;
+    color: #fff;
+}*/
+
+/*This will work on every browser*/
+.table-fixed th {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 999;
+    background-color: #000;
+    color: #fff;
+}
+
+.modal-content, .form-control {
+    background-color: darkgoldenrod;
 }
 
 .btn-primary {
