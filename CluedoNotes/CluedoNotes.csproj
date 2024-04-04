@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
-        <TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
+        <TargetFrameworks>net7.0-android;net7.0-maccatalyst</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
         <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
         <!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
@@ -16,7 +16,7 @@
         <ApplicationTitle>CluedoNotes</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>com.companyname.cluedonotes</ApplicationId>
+        <ApplicationId>com.kmezn.cluedonotes</ApplicationId>
         <ApplicationIdGuid>F959AD73-1DDF-4079-8E57-C39314AE3624</ApplicationIdGuid>
 
         <!-- Versions -->
