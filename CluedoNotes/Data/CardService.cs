@@ -39,4 +39,9 @@ public class CardService
     {
         return await App._dbService.FetchAllHeldCards();
     }
+
+public async Task<HeldCard> DeleteHistroyEvent (HeldCard heldCard)
+    {
+        return await App._dbService.DeleteHistoryEvent(heldCard);
+    }
 }

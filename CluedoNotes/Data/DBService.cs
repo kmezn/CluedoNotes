@@ -239,6 +239,20 @@ public class DBService
             throw;
         }
     }
+
+    public async Task<HeldCard> DeleteHistoryEvent(HeldCard heldCard)
+    {
+        try
+        {
+            await conn.DeleteAsync(heldCard);
+            return heldCard;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
     public async Task<Settings> UpdateSettingsAsync(Settings settings)
     {
         if (settings.Id == 0)

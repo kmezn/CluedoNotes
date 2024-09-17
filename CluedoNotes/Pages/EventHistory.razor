@@ -59,13 +59,12 @@ else
                     </td>
                     <td>@heldCard.Player.Name</td>
                     @* Possibly add the additional option to change colour or edit past events.  *@
-                    <td>
-@*                         <button class="btn btn-danger"
-                        @onclick="DeleteEvent"> *@
-                        <button>
-                            Delete!
+                    @* <td>
+                        <button class="btn btn-danger"
+                        @onclick="(() => DeleteEvent(heldCard))">
+                            Delete
                         </button>
-                    </td>
+                    </td> *@
                     @* // delete with confirmation *@ 
                     @* - probably should offer to remove all entries when an eventId is shared by other events *@
                 </tr>
@@ -81,9 +80,11 @@ else
         _heldCards = await CardService.GetHeldCardsAsync();
     }
 
-    async Task DeleteEvent()
+    async Task DeleteEvent(HeldCard heldCard)
     {
         // modal to confirm.... then remove specific event history....
+        await CardService.DeleteHistroyEvent(heldCard);
+        await OnInitializedAsync();
     }
 
 }
