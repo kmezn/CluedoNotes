@@ -2,6 +2,8 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color:darkslategrey;
+    color: white;
 }
 
 h1:focus {
@@ -10,6 +12,37 @@ h1:focus {
 
 a, .btn-link {
     color: #0071c1;
+}
+.table {
+    color: white;
+}
+
+.table-fixed {
+    width: 100%;
+}
+
+/*This will work on every browser but Chrome Browser*/
+/*.table-fixed thead {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 999;
+    background-color: #000;
+    color: #fff;
+}*/
+
+/*This will work on every browser*/
+.table-fixed th {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 999;
+    background-color: #000;
+    color: #fff;
+}
+
+.modal-content, .form-control {
+    background-color: darkgoldenrod;
 }
 
 .btn-primary {
@@ -63,8 +96,23 @@ a, .btn-link {
     content: "An error has occurred."
 }
 
+.cardNoteSelection {
+    outline: thin;
+    outline-color: black;
+    outline-style: auto;
+    margin: 4px;
+    padding-left: 2px;
+}
+
+.tickColourSelection {
+    margin-top: 3px;
+}
+
 .status-bar-safe-area {
     display: none;
+}
+.cardTypeHeader {
+    margin-top: 3px;
 }
 
 @supports (-webkit-touch-callout: none) {

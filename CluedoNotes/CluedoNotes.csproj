@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
-        <TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
+        <TargetFrameworks>net7.0-android;net7.0-maccatalyst</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
         <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
         <!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
@@ -16,7 +16,7 @@
         <ApplicationTitle>CluedoNotes</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>com.companyname.cluedonotes</ApplicationId>
+        <ApplicationId>com.kmezn.cluedonotes</ApplicationId>
         <ApplicationIdGuid>F959AD73-1DDF-4079-8E57-C39314AE3624</ApplicationIdGuid>
 
         <!-- Versions -->
@@ -29,6 +29,10 @@
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android|AnyCPU'">
+      <AndroidPackageFormat>apk</AndroidPackageFormat>
     </PropertyGroup>
 
     <ItemGroup>
@@ -53,6 +57,10 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
         <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
         <PackageReference Include="SQLiteNetExtensions" Version="2.1.0" />
+        <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.8" />
+        <PackageReference Include="SQLitePCLRaw.core" Version="2.1.8" />
+        <PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.8" />
+        <PackageReference Include="SQLitePCLRaw.provider.sqlite3" Version="2.1.8" />
     </ItemGroup>
 
 </Project>

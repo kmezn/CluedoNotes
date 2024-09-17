@@ -42,11 +42,38 @@ public class PlayerService
         }
     }
 
-
     public async Task<Player> DeletePlayerAsync(Player player)
     {
         // Delete
         await App._dbService.DeletePlayerAsync(player);     
         return player;
+    }
+
+    public async Task<Settings> GetSettingsAsync()
+    {
+        try
+        {
+            return await App._dbService.GetSettingsAsync();
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
+
+    public async Task<Settings> UpdateSettingsAsync(Settings settings)
+    {
+        return await App._dbService.UpdateSettingsAsync(settings);
+    }
+
+    public async Task ChangeDefaultCards(GameVersion version)
+    {
+        await App._dbService.ChangeDefaultCards(version);
+    }
+
+    public async Task ResetEventHistory()
+    {
+        await App._dbService.DeleteAllHistoryEvent();
     }
 }

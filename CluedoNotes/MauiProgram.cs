@@ -5,6 +5,19 @@ namespace CluedoNotes
 {
     public static class MauiProgram
     {
+        public const string DatabaseFilename = @"CluedoNotes.db";
+        public const SQLite.SQLiteOpenFlags Flags =
+            SQLite.SQLiteOpenFlags.ReadWrite |
+            SQLite.SQLiteOpenFlags.Create |
+            SQLite.SQLiteOpenFlags.SharedCache;
+        public static string DatabasePath
+        {
+            get
+            {
+                var basePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                return Path.Combine(basePath, DatabaseFilename);
+            }
+        }
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
@@ -21,19 +34,9 @@ namespace CluedoNotes
 		builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
 #endif
-
-            // Set path to the SQLite database (it will be created if it does not exist)
-            var dbPath =
-                Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    @"CluedoNotes.db");
-#if DEBUG
-            dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), 
-                @"CluedoNotes.db");
-#endif
-            // Register WeatherForecastService and the SQLite database
-            IServiceCollection serviceCollection = builder.Services.AddSingleton(
-                s => ActivatorUtilities.CreateInstance<DBService>(s, dbPath));
+        // Register the SQLite database services and viewmodel services
+        IServiceCollection serviceCollection = builder.Services.AddSingleton(
+                s => ActivatorUtilities.CreateInstance<DBService>(s));
             builder.Services.AddSingleton<CardService>();
             builder.Services.AddSingleton<PlayerService>();
 
