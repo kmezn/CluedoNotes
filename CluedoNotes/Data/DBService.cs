@@ -26,7 +26,7 @@ public class DBService
         await conn.CreateTableAsync<Settings>();
 
 
-#if DEBUG
+
         // possibly move out of debug?
         var defaultSettings = new Settings()
         {
@@ -87,7 +87,6 @@ public class DBService
         //debugPlayers.ForEach(p => playerTasks.Add(CreatePlayerAsync(p)));
         //Task.WaitAll(playerTasks.ToArray());
         //Task.WaitAll(cardTasks.ToArray());    
-#endif
     }
     public async Task<List<Card>> GetCardsAsync()
     {
