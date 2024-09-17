@@ -66,4 +66,14 @@ public class PlayerService
     {
         return await App._dbService.UpdateSettingsAsync(settings);
     }
+
+    public async Task ChangeDefaultCards(GameVersion version)
+    {
+        await App._dbService.ChangeDefaultCards(version);
+    }
+
+    public async Task ResetEventHistory()
+    {
+        await App._dbService.DeleteAllHistoryEvent();
+    }
 }

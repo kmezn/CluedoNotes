@@ -11,6 +11,16 @@
 }
 else
 {
+    <p>
+        <button class="btn btn-success"
+        @onclick="AddNewSeenCardEvent">
+            Add Confirmed Card Seen Event
+        </button>
+        <button class="btn btn-info"
+        @onclick="AddNewCardGuessEvent">
+            Add Card Guess Event
+        </button>
+    </p>
     <table class="table table-fixed">
         <thead>
             <tr>
@@ -43,7 +53,7 @@ else
                                 <div class="lowerCheckArea">
                                 @foreach (var heldEvent in @playerHeldCards.Where(w => !w.IsConfirmed))
                                 {
-                                        <span style="border: 2px solid @heldEvent.TickColour.ToString();margin: 2px;">@heldEvent.EventId</span>
+                                    <span style="border: 2px solid @heldEvent.TickColour.ToString();margin: 2px;">@heldEvent.EventId</span>
                                 }
                                 </div>
                             }
@@ -54,7 +64,6 @@ else
         </tbody>
     </table>
     <p>
-        <!-- Add a new card -->
         <button class="btn btn-success"
         @onclick="AddNewSeenCardEvent">
             Add Confirmed Card Seen Event
@@ -78,10 +87,10 @@ else
                     <h3 class="modal-title">
                         @if (_IsCardConfirmed)
                         {
-                            <span>Card Seen! (select the card below)</span>
+                            <span>Select the card seen below</span>
                         } else
                         {
-                            <span>Someone else saw a card! (select the cards that were possibly shown)</span>
+                            <span>Select the cards that were possibly shown</span>
                         }
                     </h3>
                     <p style="color:red">@_Error</p>
@@ -101,6 +110,14 @@ else
                             <option value="@p.Id">@p.Name</option>
                         }
                     </InputSelect>
+                    <div class="tickColourSelection">
+                        <InputSelect class="form-control" @bind-Value="_cardTickColour">
+                            @foreach (var type in Enum.GetValues(typeof(TickColour)))
+                            {
+                                <option value="@type">@type</option>
+                            }
+                        </InputSelect>
+                    </div>
                     @if (_objPlayer.Id != 0)
                         if(_IsCardConfirmed)
                         {
@@ -128,24 +145,19 @@ else
                         {
                             <div class="hiddenIfPlayer0">
                                 @* // Modal for a card guess (i.e. card shown to someone else and unsure which one.) *@
+                                
                                 @foreach (var objCard in _Cards.OrderBy(o => o.CardType).ThenBy(t => t.Name))
                                 {
                                     if (objCard.CardType != _prevCardType)
                                     {
                                         _prevCardType = objCard.CardType;
-                                        <h4>@objCard.CardType.ToString()</h4>
+                                        <h4 class="cardTypeHeader">@objCard.CardType.ToString()</h4>
                                     }
-                                    <label>@objCard.Name
+                                    <label class="cardNoteSelection">@objCard.Name
                                     <InputCheckbox class="" style="margin:5px;"
                                         @bind-Value="objCard.Selected" ></InputCheckbox>
                                     </label>
                                 }
-                                <InputSelect class="form-control" @bind-Value="_cardTickColour">
-                                    @foreach (var type in Enum.GetValues(typeof(TickColour)))
-                                    {
-                                        <option value="@type">@type</option>
-                                    }
-                                </InputSelect>
                                 <br />
                                 <button class="btn btn-success"
                                 @onclick="SaveCardGuess">

@@ -37,10 +37,10 @@ public class CardService
 
     public async Task<List<HeldCard>> GetHeldCardsAsync()
     {
-        return await App._dbService.FetchAllHeldCards();
+        return await App._dbService.GetAllHeldCards();
     }
 
-public async Task<HeldCard> DeleteHistroyEvent (HeldCard heldCard)
+    public async Task<HeldCard> DeleteHistroyEvent(HeldCard heldCard)
     {
         return await App._dbService.DeleteHistoryEvent(heldCard);
     }

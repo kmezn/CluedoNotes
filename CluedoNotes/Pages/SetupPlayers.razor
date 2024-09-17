@@ -141,14 +141,14 @@ else
                         Save
                     </button>&nbsp;
                     <!-- Only show delete button if not a new record -->
-@*                     @if (Card.Id > 0)
+                     @if (objPlayer.Id > 0)
                     {
                         <!-- Button to delete the forecast -->
                         <button class="btn btn-danger"
-                        @onclick="DeleteCard">
+                        @onclick="DeletePlayer">
                             Delete
                         </button>
-                    } *@
+                    } 
                 </div>
             </div>
         </div>
@@ -229,7 +229,7 @@ else
     }
 
 
-    async Task DeleteCard()
+    async Task DeletePlayer()
     {
         // Close the Popup
         ShowPlayerPopup = false;

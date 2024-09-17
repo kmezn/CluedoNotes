@@ -10,6 +10,7 @@ public enum CardType
     Suspect = 1,
     Weapon = 2
 }
+
 public class Card
 {
     [PrimaryKey, AutoIncrement]

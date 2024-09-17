@@ -90,7 +90,7 @@ else
                         <InputRadio Name="Suspect" Value="objCard.IsWeapon = true"></InputRadio>
                     </InputRadioGroup> *@
 
-                    <InputSelect class="form-control" @bind-Value="@objCard.CardType">
+                    <InputSelect class="form-control cardTypeHeader" @bind-Value="@objCard.CardType">
                         @foreach (var type in Enum.GetValues(typeof(CardType)))
                         {
                             <option value="@type">@type</option>
@@ -109,14 +109,14 @@ else
                         Save
                     </button>&nbsp;
                     <!-- Only show delete button if not a new record -->
-@*                     @if (Card.Id > 0)
+                    @if (objCard.Id > 0)
                     {
                         <!-- Button to delete the forecast -->
                         <button class="btn btn-danger"
                         @onclick="DeleteCard">
                             Delete
                         </button>
-                    } *@
+                    }
                 </div>
             </div>
         </div>

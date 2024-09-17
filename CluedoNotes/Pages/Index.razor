@@ -9,7 +9,7 @@ Setup your Players and Cards before playing.
 <h2>App Settings</h2>
 <div class="form-control">
     <ul>
-        <li>
+        @* <li>
             Dark/Light mode.
             <InputSelect class="form-control" @bind-Value="@_settings.Theme">
                 @foreach (var type in Enum.GetValues(typeof(AppTheme)))
@@ -17,7 +17,7 @@ Setup your Players and Cards before playing.
                     <option value="@type">@type</option>
                 }
             </InputSelect>
-        </li>
+        </li> *@
         <li>
             default tick colour:
             <InputSelect class="form-control" @bind-Value="@_settings.DefaultTickColour">
@@ -34,10 +34,9 @@ Setup your Players and Cards before playing.
             </button>
         </li>
         <li>
-            reset data for next games (keeps cards and player names. removed all event History and Held Cards.)
-            @* <button class="btn btn-info"
-            @onclick="ResetGame"> *@
-            <button>
+            Reset data for next games (keeps cards and player names. removed all event History and Held Cards.)
+            <button class="btn btn-info"
+            @onclick="ResetGame">
                 Reset!
             </button>
         </li>
@@ -45,7 +44,16 @@ Setup your Players and Cards before playing.
             Some other settings???
         </li>
         <li>
-            May add some links to do auto setup for games versions here:
+            <InputSelect class="form-control" @bind-Value="@_settings.GameVersion">
+                @foreach (var type in Enum.GetValues(typeof(GameVersion)))
+                {
+                    <option value="@type">@type</option>
+                }
+            </InputSelect>
+            <button class="btn btn-info"
+            @onclick="DefaultCardsSelect">
+                VersionSelect
+            </button>
         </li>
 
     </ul>
@@ -75,7 +83,11 @@ Setup your Players and Cards before playing.
 
     async Task ResetGame()
     {
+        await PlayerService.ResetEventHistory();
         // modal to confirm.... then reset event history.... 
     }
-
+    async Task DefaultCardsSelect()
+    {
+        await PlayerService.ChangeDefaultCards(_settings.GameVersion);
+    }
 }

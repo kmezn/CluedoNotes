@@ -2,7 +2,6 @@
 using SQLiteNetExtensions.Attributes;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-//using System.ComponentModel.DataAnnotations.Schema;
 using ForeignKeyAttribute = SQLiteNetExtensions.Attributes.ForeignKeyAttribute;
 
 namespace CluedoNotes.Data
@@ -11,6 +10,11 @@ namespace CluedoNotes.Data
     {
         Dark = 0,
         Light = 1,
+    }
+    public enum GameVersion
+    {
+        Classic = 0,
+        EnglishHerritige = 1
     }
 
     public class Settings
@@ -23,5 +27,7 @@ namespace CluedoNotes.Data
         // tick colour used for confirmation tick or eventId display on game notes page.
 
         public AppTheme Theme { get; set; }
+
+        public GameVersion GameVersion { get; set; }
     }
 }

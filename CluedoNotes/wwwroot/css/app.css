@@ -96,8 +96,23 @@ a, .btn-link {
     content: "An error has occurred."
 }
 
+.cardNoteSelection {
+    outline: thin;
+    outline-color: black;
+    outline-style: auto;
+    margin: 4px;
+    padding-left: 2px;
+}
+
+.tickColourSelection {
+    margin-top: 3px;
+}
+
 .status-bar-safe-area {
     display: none;
+}
+.cardTypeHeader {
+    margin-top: 3px;
 }
 
 @supports (-webkit-touch-callout: none) {
