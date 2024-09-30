@@ -21,6 +21,10 @@ a, .btn-link {
     width: 100%;
 }
 
+.notes-table td {
+    border: 1px solid black;
+}
+
 /*This will work on every browser but Chrome Browser*/
 /*.table-fixed thead {
     position: sticky;
@@ -30,7 +34,6 @@ a, .btn-link {
     background-color: #000;
     color: #fff;
 }*/
-
 /*This will work on every browser*/
 .table-fixed th {
     position: sticky;
