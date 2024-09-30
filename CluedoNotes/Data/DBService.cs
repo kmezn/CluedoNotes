@@ -241,7 +241,7 @@ public class DBService
                 .Where(w => w.PlayerId == player.Id)
                 .ToListAsync();
 
-        var heldId = conn.Table<HeldCard>().OrderByDescending(o => o.EventId).FirstAsync().Result.EventId;
+        var heldId = conn.Table<HeldCard>().OrderByDescending(o => o.EventId).FirstOrDefaultAsync()?.Result?.EventId ?? 0;
         heldId++;
 
         foreach (var card in cards)
