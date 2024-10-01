@@ -25,6 +25,7 @@ a, .btn-link {
     border: 1px solid black;
 }
 
+
 /*This will work on every browser but Chrome Browser*/
 /*.table-fixed thead {
     position: sticky;
@@ -43,9 +44,31 @@ a, .btn-link {
     background-color: #000;
     color: #fff;
 }
+.settings-dropdown {
+    margin: 5px;
+    width: 30%;
+    min-width: 111px;
+}
+.settingsPage li {
+    display: flex;
+}
+
+.settingsPage li select {
+    display: flex;
+}
+
+
 
 .modal-content, .form-control {
     background-color: darkgoldenrod;
+    color: white;
+}
+/*
+.modal-content {
+    background-color: darkslategrey;
+}*/
+.form-control select option {
+    background-color: darkslategrey;
 }
 
 .btn-primary {

@@ -32,7 +32,7 @@ public class CardService
         //if (playerId == 0)
             //throw new Exception("Player not specified");
 
-        return await App._dbService.CreateHeldCardGuess(players, cards);
+        return await App._dbService.CreateHeldCard(players, cards);
     }
 
     public async Task<List<HeldCard>> GetHeldCardsAsync()

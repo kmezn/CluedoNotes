@@ -7,14 +7,13 @@ public class DBService
     private SQLiteAsyncConnection conn;
     public DBService()
     {
-        // used to pass vars directly but changed to constants in mauiProgram.cs
+
     }
     private async Task InitAsync()
     {
         // Don't Create database if it exists
         if (conn != null)
             return;
-
         
         // Create database and Card Table
         conn = new SQLiteAsyncConnection(MauiProgram.DatabasePath, MauiProgram.Flags);
@@ -25,11 +24,17 @@ public class DBService
         await conn.CreateTableAsync<HeldCard>();
         await conn.CreateTableAsync<Settings>();
 
-        // possibly move out of debug?
         var defaultSettings = new Settings()
         {
             Theme = AppTheme.Dark,
-            DefaultTickColour = TickColour.Green,
+            ConfirmedCardSeenColour = TickColour.Green,
+            ConfirmedCardSeenStyle = TickStyle.check,
+            ConfirmedNoCardColour = TickColour.Red,
+            ConfirmedNoCardStyle = TickStyle.x,
+            CardShownColour = TickColour.purple,
+            CardShownStyle = TickStyle.eye,
+            MyCardColour = TickColour.Blue,
+            MyCardStyle = TickStyle.bookmark,
         };
         await UpdateSettingsAsync(defaultSettings);
 
@@ -114,6 +119,7 @@ public class DBService
                 });
                 break;
         }
+        /// fix existing cards being added in addition. 
         var existingCards = await GetCardsAsync();
         cards.Where(c => !existingCards.Any(a => a.Name == c.Name)).ToList().ForEach(async r => await CreateCardAsync(r));
         
@@ -133,7 +139,7 @@ public class DBService
     }
     public async Task<List<Card>> GetCardsAsync()
     {
-            await InitAsync();
+            
             return await conn.Table<Card>().ToListAsync();
     }
     public async Task<Card> CreateCardAsync(Card card)
@@ -160,8 +166,16 @@ public class DBService
 
     public async Task<List<Player>> GetPlayersAsync()
     {
-        await InitAsync();
-        var players = await conn.Table<Player>().ToListAsync();
+        var players = new List<Player>
+        {
+            new Player()
+            {
+                Id = 0,
+                Name = "My Cards"
+            }
+        };
+        players.AddRange( await conn.Table<Player>().ToListAsync());
+
         foreach (var player in players)
         {
             player.HeldCards = await conn.Table<HeldCard>()
@@ -188,7 +202,7 @@ public class DBService
     public async Task<List<HeldCard>> GetAllHeldCards()
     {
         var allCards = await conn.Table<Card>().ToListAsync();
-        var players = await conn.Table<Player>().ToListAsync();
+        var players = await GetPlayersAsync();
         var allHeldCards = await conn.Table<HeldCard>().ToListAsync();
         foreach(var heldCard in allHeldCards)
         {
@@ -215,56 +229,60 @@ public class DBService
         return player;
     }
 
-    public async Task<Player> UpdatePlayerCardsAsync(Player player)
-    {
-        // loop held cards. 
-        foreach (var h in player.HeldCards)
-        {
-            if (h.Id == 0)
-            {
-                await conn.InsertAsync(h);
-            }
-            else
-            {
-                await conn.UpdateAsync(h);
-            }
+    //public async Task<Player> UpdatePlayerCardsAsync(Player player, List<Card> cards)
+    //{
+    //    var settings = await GetSettingsAsync();
+    //    var heldId = conn.Table<HeldCard>().OrderByDescending(o => o.EventId).FirstOrDefaultAsync()?.Result?.EventId ?? 0;
+    //    heldId++;
+    //    var tickColour = TickColour.purple;
+    //    // loop held cards. 
+    //    foreach (var h in cards)
+    //    {
             
-        }
-        // Return the updated object
-        return player;
-    }
+            
+    //    }
+    //    // Return the updated object
+    //    return player;
+    //}
 
-    public async Task<int> CreateHeldCardGuess(List<Player> players, List<Card> cards)
+    public async Task<int> CreateHeldCard(List<Player> players, List<Card> cards)
     {
-        // move colour set up later. 
-        var SeenColour = TickColour.Green;
-        var noCardColour = TickColour.Red;
+        var settings = await GetSettingsAsync();
+        // default colour incase a problem arrises... 
         var tickColour = TickColour.purple;
 
         var heldId = conn.Table<HeldCard>().OrderByDescending(o => o.EventId).FirstOrDefaultAsync()?.Result?.EventId ?? 0;
         heldId++;
 
-        foreach (var player in players.Where(p => p.HasACard || p.HasNoCard)) 
+        foreach (var player in players.Where(p => p.TmpHasACard || p.TmpHasNoCard)) 
         {
             player.HeldCards = await conn.Table<HeldCard>()
                 .Where(w => w.PlayerId == player.Id)
                 .ToListAsync();
             foreach (var card in cards)
             {
-                if (player.HasACard)
+                if (player.Id == 0 || player.TmpShownMyCard) 
                 {
-                    tickColour = SeenColour;
+                    tickColour = settings.MyCardColour;
                 }
-                else if (player.HasNoCard)
+                else if (player.TmpIsConfirmed) 
                 {
-                    tickColour = noCardColour;
+                    tickColour = settings.ConfirmedCardSeenColour;
                 }
-
+                else if (player.TmpHasACard)
+                {
+                    tickColour = settings.CardShownColour;
+                }
+                else if (player.TmpHasNoCard)
+                {
+                    tickColour = settings.ConfirmedNoCardColour;
+                }
+                
                 var c = new HeldCard()
                 {
                     CardId = card.Id,
                     EventId = heldId,
-                    IsConfirmed = false,
+                    IsConfirmed = player.TmpIsConfirmed,
                     PlayerId = player.Id,
                     TickColour = tickColour,
                 };

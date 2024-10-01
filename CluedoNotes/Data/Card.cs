@@ -6,8 +6,8 @@ namespace CluedoNotes.Data;
 
 public enum CardType
 {
-    Room = 0,
-    Suspect = 1,
+    Suspect = 0,
+    Room = 1,
     Weapon = 2
 }
 

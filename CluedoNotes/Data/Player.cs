@@ -22,9 +22,18 @@ namespace CluedoNotes.Data
         [OneToMany(nameof(HeldCard), CascadeOperations = CascadeOperation.CascadeRead)]
         public List<HeldCard> HeldCards { get; set; } = new List<HeldCard>();
 
+
+
+
+
+        // temp values as view model for passing back to DB with guesses/confirmed cards. 
         [NotMapped]
-        public bool HasACard { get; set; }
+        public bool TmpHasACard { get; set; }
         [NotMapped]
-        public bool HasNoCard { get; set; }
+        public bool TmpHasNoCard { get; set; }
+        [NotMapped]
+        public bool TmpIsConfirmed { get; set; } = false;
+        [NotMapped]
+        public bool TmpShownMyCard { get; set; } = false;
     }
 }
