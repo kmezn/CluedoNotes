@@ -32,7 +32,6 @@ public class DBService
             ConfirmedNoCardColour = TickColour.Red,
             ConfirmedNoCardStyle = TickStyle.x,
             CardShownColour = TickColour.purple,
-            CardShownStyle = TickStyle.eye,
             MyCardColour = TickColour.Blue,
             MyCardStyle = TickStyle.bookmark,
         };
@@ -250,6 +249,7 @@ public class DBService
         var settings = await GetSettingsAsync();
         // default colour incase a problem arrises... 
         var tickColour = TickColour.purple;
+        var tickStyle = TickStyle.warning;
 
         var heldId = conn.Table<HeldCard>().OrderByDescending(o => o.EventId).FirstOrDefaultAsync()?.Result?.EventId ?? 0;
         heldId++;
@@ -264,10 +264,12 @@ public class DBService
                 if (player.Id == 0 || player.TmpShownMyCard) 
                 {
                     tickColour = settings.MyCardColour;
+                    tickStyle = settings.MyCardStyle;
                 }
                 else if (player.TmpIsConfirmed) 
                 {
                     tickColour = settings.ConfirmedCardSeenColour;
+                    tickStyle = settings.ConfirmedCardSeenStyle;
                 }
                 else if (player.TmpHasACard)
                 {
@@ -276,6 +278,7 @@ public class DBService
                 else if (player.TmpHasNoCard)
                 {
                     tickColour = settings.ConfirmedNoCardColour;
+                    tickStyle = settings.ConfirmedNoCardStyle;
                 }
                 
                 var c = new HeldCard()
@@ -285,6 +288,7 @@ public class DBService
                     IsConfirmed = player.TmpIsConfirmed,
                     PlayerId = player.Id,
                     TickColour = tickColour,
+                    TickStyle = tickStyle,
                 };
                 await conn.InsertAsync(c);
                 player.HeldCards.Add(c);

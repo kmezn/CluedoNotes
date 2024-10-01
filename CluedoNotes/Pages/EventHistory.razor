@@ -49,7 +49,7 @@ else
                     <td>@heldCard.Card.Name</td>
                     <td>
                         @if(heldCard.IsConfirmed){
-                            <span class="oi oi-check oi-bold align-self-center" alt="Confirmed" style="color:@heldCard.TickColour.ToString()"></span>
+                            <span class="oi oi-@heldCard.TickStyle.ToString()" alt="Confirmed" style="color:@heldCard.TickColour.ToString()"></span>
                         }
                         @if (!heldCard.IsConfirmed){
                             <span style="border: 2px solid @heldCard.TickColour.ToString();margin: 2px;">@heldCard.EventId</span>

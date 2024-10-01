@@ -57,7 +57,9 @@ a, .btn-link {
     display: flex;
 }
 
-
+.oi {
+    margin: 0 4px;
+}
 
 .modal-content, .form-control {
     background-color: darkgoldenrod;

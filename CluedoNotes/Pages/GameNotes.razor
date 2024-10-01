@@ -57,7 +57,7 @@ else
                         @*icon for showing the card is invalid for a guess.*@
                         @if (_Players.Any(p => p.HeldCards.Any(h => h.IsConfirmed && card.Id == h.CardId)))
                         {
-                            <span class="oi oi-x oi-bold align-self-center" alt="Confirmed" style="color:@_settings.ConfirmedNoCardColour.ToString()"></span>
+                            <span class="oi oi-@_settings.ConfirmedNoCardStyle.ToString()" style="color:@_settings.ConfirmedNoCardColour.ToString()"></span>
                         }
 
                         @card.Name @* the table headers down the left *@
@@ -65,7 +65,7 @@ else
                         @*icon for showing the card is owned by the player.*@
                         @if (_Players.Any(p => p.Id == 0 && p.HeldCards.Any(h => h.IsConfirmed && card.Id == h.CardId)))
                         {
-                            <span class="oi oi-check oi-bold align-self-center" alt="Confirmed" style="color:@_settings.MyCardColour.ToString()"></span>
+                            <span class="oi oi-@_settings.MyCardStyle.ToString()" style="color:@_settings.MyCardColour.ToString()"></span>
                         }
                     </td>
                     @foreach (var player in _Players.Where(p => p.Id != 0))
@@ -83,7 +83,7 @@ else
                                            && (playerHeldCards.Any(h => h.TickColour == _settings.ConfirmedNoCardColour || h.TickColour == _settings.MyCardColour)
                                                  || myCards.HeldCards.Any(h => h.TickColour == _settings.MyCardColour && h.CardId == card.Id)))
                                         {
-                                            <span class="oi oi-x oi-bold align-self-center" alt="Confirmed" style="color:@_settings.ConfirmedNoCardColour.ToString()"></span>
+                                            <span class="oi oi-@_settings.ConfirmedNoCardStyle.ToString()" style="color:@_settings.ConfirmedNoCardColour.ToString()"></span>
                                         }
 
 
@@ -107,7 +107,7 @@ else
 
                                 @foreach (var heldEvent in playerHeldCards.Where(w => w.IsConfirmed))
                                 {
-                                    <span class="oi oi-check oi-bold align-self-center" alt="Confirmed" style="color:@heldEvent.TickColour.ToString()"></span>
+                                        <span class="oi oi-@heldEvent.TickStyle.ToString()" style="color:@heldEvent.TickColour.ToString()"></span>
                                 }
 
                             }

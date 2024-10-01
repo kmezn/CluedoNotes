@@ -25,8 +25,6 @@ namespace CluedoNotes.Data
 
         [EnumDataType(typeof(TickColour))]
         public TickColour CardShownColour { get; set; }
-        [EnumDataType(typeof(TickStyle))]
-        public TickStyle CardShownStyle { get; set; }
 
         [EnumDataType(typeof(TickColour))]
         public TickColour ConfirmedCardSeenColour { get; set; }

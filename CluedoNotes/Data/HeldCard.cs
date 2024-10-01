@@ -49,5 +49,7 @@ namespace CluedoNotes.Data
         [EnumDataType(typeof(TickColour))]
         public TickColour TickColour { get; set; }
         // tick colour used for confirmation tick or eventId display on game notes page.
+        [EnumDataType(typeof(TickColour))]
+        public TickStyle TickStyle { get; set; }
     }
 }

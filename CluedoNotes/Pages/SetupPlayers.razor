@@ -28,7 +28,7 @@ else
                     <td>@player.Name</td>
                     <td>
                         @if (player.HeldCards != null)
-                            @foreach (var heldCard in player.HeldCards.Where(c => c.IsConfirmed))
+                            @foreach (var heldCard in player.HeldCards.Where(c => c.IsConfirmed && (c.TickColour == _settings.ConfirmedCardSeenColour || player.Id == 0)))
                             {
                                 <div class="nav-item px-3">
                                     @switch (heldCard.Card.CardType)
@@ -54,7 +54,8 @@ else
                     </td>
                     <td>
                         @if (player.HeldCards != null)
-                            @foreach (var heldCard in player.HeldCards.Where(c => !c.IsConfirmed))
+                            @foreach (var heldCard in player.HeldCards.Where(c => !c.IsConfirmed && c.TickColour == _settings.CardShownColour 
+                            && !players.First(f => f.Id == 0).HeldCards.Any(a => a.CardId == c.CardId)))
                             {
                                 <div class="nav-item px-3">
                                     @switch (heldCard.Card.CardType)
@@ -165,10 +166,12 @@ else
     List<Player> players = new List<Player>();
     Player objPlayer = new Player();
     bool ShowPlayerPopup = false;
+    Settings _settings = new Settings();
     protected override async Task OnInitializedAsync()
     {
         // Get the forecasts
         players = await PlayerService.GetPlayersAsync();
+        _settings = await PlayerService.GetSettingsAsync();
     }
     void AddNewPlayer()
     {
