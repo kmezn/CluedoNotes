@@ -12,12 +12,12 @@
 else
 {
     <p>
-        <button class="btn btn-success"
-        @onclick="AddNewSeenCardEvent">
-            Add Confirmed Card Seen Event
-        </button>
+        @* <button class="btn btn-success"
+    @onclick="AddNewSeenCardEvent">
+    Add Confirmed Card Seen Event
+    </button> *@
         <button class="btn btn-info"
-        @onclick="AddNewCardGuessEvent">
+                @onclick="AddNewCardGuessEvent">
             Add Card Guess Event
         </button>
     </p>
@@ -25,7 +25,7 @@ else
         <thead>
             <tr>
                 <th class="sticky">@* Card *@</th>
-                @foreach (var player  in _Players)
+                @foreach (var player in _Players)
                 {
                     <th class="sticky">@player.Name</th>
                 }
@@ -49,12 +49,12 @@ else
                                 @foreach (var heldEvent in @playerHeldCards.Where(w => w.IsConfirmed))
                                 {
                                     <span class="oi oi-check oi-bold align-self-center" alt="Confirmed" style="color:@heldEvent.TickColour.ToString()"></span>
-                                } 
-                                <div class="lowerCheckArea">
-                                @foreach (var heldEvent in @playerHeldCards.Where(w => !w.IsConfirmed))
-                                {
-                                    <span style="border: 2px solid @heldEvent.TickColour.ToString();margin: 2px;">@heldEvent.EventId</span>
                                 }
+                                <div class="lowerCheckArea">
+                                    @foreach (var heldEvent in @playerHeldCards.Where(w => !w.IsConfirmed))
+                                    {
+                                        <span style="border: 2px solid @heldEvent.TickColour.ToString();margin: 2px;">@heldEvent.EventId</span>
+                                    }
                                 </div>
                             }
                         </td>
@@ -65,11 +65,11 @@ else
     </table>
     <p>
         <button class="btn btn-success"
-        @onclick="AddNewSeenCardEvent">
+                @onclick="AddNewSeenCardEvent">
             Add Confirmed Card Seen Event
         </button>
         <button class="btn btn-info"
-        @onclick="AddNewCardGuessEvent">
+                @onclick="AddNewCardGuessEvent">
             Add Card Guess Event
         </button>
     </p>
@@ -85,86 +85,121 @@ else
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title">
-                        @if (_IsCardConfirmed)
-                        {
-                            <span>Select the card seen below</span>
-                        } else
-                        {
-                            <span>Select the cards that were possibly shown</span>
-                        }
+                        Select the 3 cards requested
                     </h3>
                     <p style="color:red">@_Error</p>
                     <!-- Button to close the popup -->
                     <button type="button" class="close"
-                    @onclick="ClosePopup">
+                            @onclick="ClosePopup">
                         <span aria-hidden="true">X</span>
                     </button>
                 </div>
-                <!-- Edit form for the current forecast -->
                 <div class="modal-body">
-                    <h4 type="text">@_objPlayer.Name</h4>
-                    <InputSelect id="SelectedPlayerId" class="form-control" @bind-Value="_objPlayer.Id">
-                    <option value="0">Select a Player</option>
-                        @foreach (var p in _Players)
-                        {
-                            <option value="@p.Id">@p.Name</option>
-                        }
-                    </InputSelect>
-                    <div class="tickColourSelection">
-                        <InputSelect class="form-control" @bind-Value="_cardTickColour">
+                    <div class="cardSelectSection">
+                        @* <InputSelect class="form-control" @bind-Value="_cardTickColour">
                             @foreach (var type in Enum.GetValues(typeof(TickColour)))
                             {
                                 <option value="@type">@type</option>
                             }
-                        </InputSelect>
+                        </InputSelect> *@
+                        <h4>@CardType.Room</h4>
+                        <div class="roomSection">
+                            @{
+                                var roomSelected = _Cards.Where(w => w.CardType == CardType.Room && w.Selected).Any();
+                                foreach (var objCard in _Cards.Where(w => w.CardType == CardType.Room).OrderBy(o => o.CardType).ThenBy(t => t.Name))
+                                {
+                                    if (!(roomSelected && !objCard.Selected))
+                                    {
+                                        <label class="cardNoteSelection">
+                                            @objCard.Name
+                                            <InputCheckbox class="" style="margin:5px;"
+                                                           @bind-Value="objCard.Selected"></InputCheckbox>
+                                        </label>
+                                    }
+                                }
+                            }
+                        </div>
+                        <h4>@CardType.Suspect</h4>
+                        <div class="suspectSection">
+                            @{
+                                var suspectSelected = _Cards.Where(w => w.CardType == CardType.Suspect && w.Selected).Any();
+                                foreach (var objCard in _Cards.Where(w => w.CardType == CardType.Suspect).OrderBy(o => o.CardType).ThenBy(t => t.Name))
+                                {
+                                    if (!(suspectSelected && !objCard.Selected))
+                                    {
+                                        <label class="cardNoteSelection">
+                                            @objCard.Name
+                                            <InputCheckbox class="" style="margin:5px;"
+                                                           @bind-Value="objCard.Selected"></InputCheckbox>
+                                        </label>
+                                    }
+                                }
+                            }
+                        </div>
+                        <h4>@CardType.Weapon</h4>
+                        <div class="weaponSection">
+                            @{
+                                var weaponSelected = _Cards.Where(w => w.CardType == CardType.Weapon && w.Selected).Any();
+                                foreach (var objCard in _Cards.Where(w => w.CardType == CardType.Weapon).OrderBy(o => o.CardType).ThenBy(t => t.Name))
+                                {
+                                    if (!(weaponSelected && !objCard.Selected))
+                                    {
+                                        <label class="cardNoteSelection">
+                                            @objCard.Name
+                                            <InputCheckbox class="" style="margin:5px;"
+                                                           @bind-Value="objCard.Selected"></InputCheckbox>
+                                        </label>
+                                    }
+                                }
+                            }
+                        </div>
                     </div>
-                    @if (_objPlayer.Id != 0)
-                        if(_IsCardConfirmed)
-                        {
-                            <div class="hiddenIfPlayer0">
-                                <InputSelect class="form-control" @bind-Value="_cardTickColour">
-                                    @foreach (var type in Enum.GetValues(typeof(TickColour)))
-                                    {
-                                        <option value="@type">@type</option>
+                    <div>
+                        @if(roomSelected && suspectSelected && weaponSelected){
+                            foreach (var p in _Players)
+                            {
+                                <h4>
+                                    @p.Name
+                                </h4>
+                                    @if (!p.HasACard){
+                                        <label class="cardNoteSelection">
+                                            No card held
+                                            <InputCheckbox class="noCardCheckbox" style="margin:5px;"
+                                                           @bind-Value="p.HasNoCard" />
+                                        </label>
                                     }
-                                </InputSelect>
-                                @foreach (var objCard in _Cards.OrderBy(o => o.CardType).ThenBy(t => t.Name))
-                                {
-                                    if (objCard.CardType != _prevCardType)
+                                    @if (!p.HasNoCard)
                                     {
-                                        _prevCardType = objCard.CardType;
-                                        <h4>@objCard.CardType.ToString()</h4>
+                                        <label class="cardNoteSelection">
+                                            Card Shown
+                                            <InputCheckbox class="cardShownCheckbox" style="margin:5px;"
+                                            @bind-Value="p.HasACard" />
+                                        </label>
                                     }
-                                    <button class="btn btn-info" style="margin:5px;"
-                                    @onclick="(() => CardSeen(objCard, _cardTickColour))">
-                                        @objCard.Name
-                                    </button>
-                                }
-                            </div>
-                        } else
-                        {
-                            <div class="hiddenIfPlayer0">
-                                @* // Modal for a card guess (i.e. card shown to someone else and unsure which one.) *@
                                 
-                                @foreach (var objCard in _Cards.OrderBy(o => o.CardType).ThenBy(t => t.Name))
-                                {
-                                    if (objCard.CardType != _prevCardType)
-                                    {
-                                        _prevCardType = objCard.CardType;
-                                        <h4 class="cardTypeHeader">@objCard.CardType.ToString()</h4>
-                                    }
-                                    <label class="cardNoteSelection">@objCard.Name
-                                    <InputCheckbox class="" style="margin:5px;"
-                                        @bind-Value="objCard.Selected" ></InputCheckbox>
-                                    </label>
-                                }
-                                <br />
-                                <button class="btn btn-success"
-                                @onclick="SaveCardGuess">
-                                    Save
-                                </button>
-                            </div>
+                            }
                         }
+                    </div>
+                    @*<div class="hiddenIfPlayer0">
+                @* // Modal for a card guess (i.e. card shown to someone else and unsure which one.)
+
+                @foreach (var objCard in _Cards.OrderBy(o => o.CardType).ThenBy(t => t.Name))
+                {
+                if (objCard.CardType != _prevCardType)
+                {
+                _prevCardType = objCard.CardType;
+                <h4 class="cardTypeHeader">@objCard.CardType.ToString()</h4>
+                }
+
+                }
+                *@
+                <br />
+                <button class="btn btn-success"
+                @onclick="SaveCardGuess">
+                Save
+                </button>
+                @* </div>  *@
+
                 </div>
             </div>
         </div>
@@ -198,7 +233,7 @@ else
         _objPlayer = new Player();
         // Set Id to 0 so we know it is a new record
         _objPlayer.Id = 0;
-        // Open the Popup for confirmed cards. 
+        // Open the Popup for confirmed cards.
         _IsCardConfirmed = true;
         _ShowPlayerCardsPopup = true;
     }
@@ -209,7 +244,7 @@ else
         _objPlayer = new Player();
         // Set Id to 0 so we know it is a new record
         _objPlayer.Id = 0;
-        // Open the Popup for a guess event. 
+        // Open the Popup for a guess event.
         _IsCardConfirmed = false;
         _ShowPlayerCardsPopup = true;
     }
@@ -250,22 +285,22 @@ else
             await PlayerService.UpdatePlayerCardsAsync(_objPlayer);
             await OnInitializedAsync();
             ClosePopup();
-            
+
         }
         catch (Exception ex)
         {
             _Error = ex.Message;
         }
     }
-    async Task SaveCardGuess() //ToDo change to being an event for guessing at a card.
+    async Task SaveCardGuess()
     {
         // Close the Popup
-        _ShowPlayerCardsPopup = false;
+        // _ShowPlayerCardsPopup = false;
         _Error = "";
         try
         {
-            var newPlayer =
-                await CardService.CreateHeldCardGuess(_objPlayer.Id, _Cards.Where(w => w.Selected).ToList(), _cardTickColour);
+            
+                await CardService.CreateHeldCardGuess(_Players, _Cards.Where(w => w.Selected).ToList());
         }
         catch (Exception ex)
         {
@@ -273,6 +308,6 @@ else
         }
         await OnInitializedAsync(); /* Should rework to not require page refresh???  */
         ClosePopup();
-        
+
     }
 }

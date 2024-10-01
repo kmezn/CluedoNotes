@@ -234,31 +234,45 @@ public class DBService
         return player;
     }
 
-    public async Task<Player> CreateHeldCardGuess(int playerId, List<Card> cards, TickColour tickColour)
+    public async Task<int> CreateHeldCardGuess(List<Player> players, List<Card> cards)
     {
-        var player = await conn.Table<Player>().FirstAsync(w => w.Id == playerId);
-            player.HeldCards = await conn.Table<HeldCard>()
-                .Where(w => w.PlayerId == player.Id)
-                .ToListAsync();
+        // move colour set up later. 
+        var SeenColour = TickColour.Green;
+        var noCardColour = TickColour.Red;
+        var tickColour = TickColour.purple;
 
         var heldId = conn.Table<HeldCard>().OrderByDescending(o => o.EventId).FirstOrDefaultAsync()?.Result?.EventId ?? 0;
         heldId++;
 
-        foreach (var card in cards)
+        foreach (var player in players.Where(p => p.HasACard || p.HasNoCard)) 
         {
-            var c = new HeldCard()
+            player.HeldCards = await conn.Table<HeldCard>()
+                .Where(w => w.PlayerId == player.Id)
+                .ToListAsync();
+            foreach (var card in cards)
             {
-                CardId = card.Id,
-                EventId = heldId,
-                IsConfirmed = false,
-                PlayerId = playerId,
-                TickColour = tickColour,
-            };
-            await conn.InsertAsync(c);
-            player.HeldCards.Add(c);
-        }
+                if (player.HasACard)
+                {
+                    tickColour = SeenColour;
+                }
+                else if (player.HasNoCard)
+                {
+                    tickColour = noCardColour;
+                }
 
-        return player;
+                var c = new HeldCard()
+                {
+                    CardId = card.Id,
+                    EventId = heldId,
+                    IsConfirmed = false,
+                    PlayerId = player.Id,
+                    TickColour = tickColour,
+                };
+                await conn.InsertAsync(c);
+                player.HeldCards.Add(c);
+            }
+        }
+        return 0;
     }
 
     public async Task<Player> DeletePlayerAsync(Player player)
