@@ -16,6 +16,17 @@ namespace CluedoNotes.Data
         Yellow = 3,
         purple = 4,
     }
+
+    public enum TickStyle
+    {
+        check = 0,
+        x = 1,
+        eye = 2,
+        bookmark = 3,
+        warning = 4,
+        pencil = 5,
+        minus = 6
+    }
     public class HeldCard
     {
         [PrimaryKey, AutoIncrement]
@@ -38,5 +49,7 @@ namespace CluedoNotes.Data
         [EnumDataType(typeof(TickColour))]
         public TickColour TickColour { get; set; }
         // tick colour used for confirmation tick or eventId display on game notes page.
+        [EnumDataType(typeof(TickColour))]
+        public TickStyle TickStyle { get; set; }
     }
 }

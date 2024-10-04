@@ -24,20 +24,20 @@ public class PlayerService
             return player;
     }
 
-    public async Task<Player> UpdatePlayerCardsAsync(Player player)
+    public async Task<Player> UpdatePlayerCardsAsync(Player player, List<Card> cards)
     {
         try
         {
-            if (player.Id == 0)
-                throw new Exception("Player not specified");
-            // Update
-            await App._dbService.UpdatePlayerCardsAsync(player);
+            var players = new List<Player>()
+            {
+                player
+            };
+            await App._dbService.CreateHeldCard(players, cards);
             // Return the updated object
             return player;
         }
         catch (Exception ex)
         {
-
             throw;
         }
     }

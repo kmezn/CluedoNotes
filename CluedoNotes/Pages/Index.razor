@@ -4,39 +4,95 @@
 
 <h1>Cluedo Notes</h1>
 
-Setup your Players and Cards before playing. 
+Setup your Players and Cards before playing.
 
 <h2>App Settings</h2>
-<div class="form-control">
+<div class="form-control settingsPage">
     <ul>
         @* <li>
-            Dark/Light mode.
-            <InputSelect class="form-control" @bind-Value="@_settings.Theme">
-                @foreach (var type in Enum.GetValues(typeof(AppTheme)))
-                {
-                    <option value="@type">@type</option>
-                }
-            </InputSelect>
+        Dark/Light mode.
+        <InputSelect class="form-control" @bind-Value="@_settings.Theme">
+        @foreach (var type in Enum.GetValues(typeof(AppTheme)))
+        {
+        <option value="@type">@type</option>
+        }
+        </InputSelect>
         </li> *@
         <li>
-            default tick colour:
-            <InputSelect class="form-control" @bind-Value="@_settings.DefaultTickColour">
-                @foreach (var type in Enum.GetValues(typeof(TickColour)))
+            My cards colour:
+            <i class="oi oi-@_settings.MyCardStyle.ToString()" style="color:@_settings.MyCardColour.ToString()"></i>
+            <InputSelect class="form-control settings-dropdown" @bind-Value="@_settings.MyCardColour">
+                @foreach (var colour in Enum.GetValues(typeof(TickColour)))
                 {
-                    <option value="@type">@type</option>
+                    <option value="@colour" style="color:@colour.ToString()">@colour</option>
+                }
+            </InputSelect>
+            <InputSelect class="form-control settings-dropdown" @bind-Value="@_settings.MyCardStyle">
+                @foreach (TickStyle style in Enum.GetValues(typeof(TickStyle)))
+                {
+                    <option value="@style">@style</option>
+                }
+            </InputSelect>
+        </li>
+        <li>
+            Card seen colour:
+            <i class="oi oi-@_settings.ConfirmedCardSeenStyle.ToString()" style="color:@_settings.ConfirmedCardSeenColour.ToString()"></i>
+            <InputSelect class="form-control settings-dropdown" @bind-Value="@_settings.ConfirmedCardSeenColour">
+                @foreach (var colour in Enum.GetValues(typeof(TickColour)))
+                {
+                    <option value="@colour" style="color:@colour.ToString()">@colour</option>
+                }
+            </InputSelect>
+            <InputSelect class="form-control settings-dropdown" @bind-Value="@_settings.ConfirmedCardSeenStyle">
+                @foreach (TickStyle style in Enum.GetValues(typeof(TickStyle)))
+                {
+                    <option value="@style">@style</option>
+                }
+            </InputSelect>
+        </li>
+        <li>
+            No card colour:
+            <i class="oi oi-@_settings.ConfirmedNoCardStyle.ToString()" style="color:@_settings.ConfirmedNoCardColour.ToString()"></i>
+            <InputSelect class="form-control settings-dropdown" @bind-Value="@_settings.ConfirmedNoCardColour">
+                @foreach (var colour in Enum.GetValues(typeof(TickColour)))
+                {
+                    <option value="@colour" style="color:@colour.ToString()">@colour</option>
+                }
+            </InputSelect>
+            <InputSelect class="form-control settings-dropdown" @bind-Value="@_settings.ConfirmedNoCardStyle">
+                @foreach (TickStyle style in Enum.GetValues(typeof(TickStyle)))
+                {
+                    <option value="@style">@style</option>
+                }
+            </InputSelect>
+        </li>
+        <li>
+            Card shown event colour:
+            <div class="lowerCheckArea">
+                <span style="border: 2px solid @_settings.CardShownColour.ToString(); margin: 2px;">15</span>
+            </div>
+            <InputSelect class="form-control settings-dropdown" @bind-Value="@_settings.CardShownColour">
+                @foreach (var colour in Enum.GetValues(typeof(TickColour)))
+                {
+                    <option value="@colour" style="color:@colour.ToString()">@colour</option>
                 }
             </InputSelect>
         </li>
         <li>
             <button class="btn btn-success"
-            @onclick="SaveSettings">
+                    @onclick="SaveSettings">
                 Save
             </button>
         </li>
+        </ul>
+        </div>
+        <br />
+    <div class="form-control settingsPage">
+        <ul>
         <li>
             Reset data for next games (keeps cards and player names. removed all event History and Held Cards.)
             <button class="btn btn-info"
-            @onclick="ResetGame">
+                    @onclick="ResetGame">
                 Reset!
             </button>
         </li>
@@ -51,7 +107,7 @@ Setup your Players and Cards before playing.
                 }
             </InputSelect>
             <button class="btn btn-info"
-            @onclick="DefaultCardsSelect">
+                    @onclick="DefaultCardsSelect">
                 VersionSelect
             </button>
         </li>
@@ -84,7 +140,7 @@ Setup your Players and Cards before playing.
     async Task ResetGame()
     {
         await PlayerService.ResetEventHistory();
-        // modal to confirm.... then reset event history.... 
+        // modal to confirm.... then reset event history....
     }
     async Task DefaultCardsSelect()
     {
