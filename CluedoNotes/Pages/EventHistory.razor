@@ -4,7 +4,28 @@
 @inject CardService CardService
 
 <h1>Event History</h1>
-<p>This component demonstrates fetching data from a service.</p>
+<p>
+    List of past events recorded. 
+</p>
+<p>
+    To reset all events for a new game or to delete an individual event <span style="font-weight: bold;">Warning these options are permanent! and cannot be undone. </span>
+    <label class="cardNoteSelection">
+        Show detailed events?
+        <InputCheckbox class="cardShownCheckbox" style="margin:5px;"
+                       @bind-Value="_enableDelete" />
+    </label>
+    @if (_enableDelete)
+    {
+        <br />
+        <span>Reset data for next games (keeps cards and player names.removed all event History and Held Cards.)</span>
+    <button class="btn btn-info"
+            @onclick="ResetGame">
+        Reset!
+    </button>
+    }
+    
+</p>
+
 
 @if (_heldCards == null)
 {
@@ -20,7 +41,10 @@ else
                 <th>Card Name</th>
                 <th>Guess Event Id</th>
                 <th>Held by</th>
-                <th>Actions:</th>
+                @if (_enableDelete)
+                {
+                    <th>Actions:</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -48,23 +72,29 @@ else
                     </td>
                     <td>@heldCard.Card.Name</td>
                     <td>
-                        @if(heldCard.IsConfirmed){
-                            <span class="oi oi-@heldCard.TickStyle.ToString()" alt="Confirmed" style="color:@heldCard.TickColour.ToString()"></span>
+                        @switch (heldCard.LogType)
+                        {
+                            case LogType.MyCard:
+                            case LogType.CardSeen:
+                            case LogType.NoCardEvent:
+                                <span class="oi oi-@heldCard.TickStyle.ToString()" style="color:@heldCard.TickColour.ToString()"></span>
+                                break;
+                            case LogType.PossibleCardEvent:
+                                <span style="border: 2px solid @heldCard.TickColour.ToString();margin: 2px;">@heldCard.EventId</span>
+                                break;
                         }
-                        @if (!heldCard.IsConfirmed){
-                            <span style="border: 2px solid @heldCard.TickColour.ToString();margin: 2px;">@heldCard.EventId</span>
-                        }
+
                     </td>
                     <td>@heldCard.Player.Name</td>
-                    @* Possibly add the additional option to change colour or edit past events.  *@
-                    <td>
-                        <button class="btn btn-danger"
-                        @onclick="(() => DeleteEvent(heldCard))">
-                            Delete
-                        </button>
-                    </td>
-                    @* // delete with confirmation *@ 
-                    @* - probably should offer to remove all entries when an eventId is shared by other events *@
+                    @if (_enableDelete)
+                    {
+                        <td>
+                            <button class="btn btn-danger"
+                                    @onclick="(() => DeleteEvent(heldCard))">
+                                Delete
+                            </button>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>
@@ -72,6 +102,7 @@ else
 }
 
 @code {
+    bool _enableDelete = false;
     List<HeldCard> _heldCards = new List<HeldCard>();
     protected override async Task OnInitializedAsync()
     {
@@ -80,8 +111,13 @@ else
 
     async Task DeleteEvent(HeldCard heldCard)
     {
-        // modal to confirm.... then remove specific event history....
         await CardService.DeleteHistroyEvent(heldCard);
+        await OnInitializedAsync();
+    }
+
+    async Task ResetGame()
+    {
+        await CardService.ResetEventHistory();
         await OnInitializedAsync();
     }
 

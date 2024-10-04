@@ -71,9 +71,4 @@ public class PlayerService
     {
         await App._dbService.ChangeDefaultCards(version);
     }
-
-    public async Task ResetEventHistory()
-    {
-        await App._dbService.DeleteAllHistoryEvent();
-    }
 }

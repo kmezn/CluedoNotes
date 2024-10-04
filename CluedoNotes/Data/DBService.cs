@@ -247,9 +247,10 @@ public class DBService
     public async Task<int> CreateHeldCard(List<Player> players, List<Card> cards)
     {
         var settings = await GetSettingsAsync();
-        // default colour incase a problem arrises... 
+        // default colour in case a problem arises... 
         var tickColour = TickColour.purple;
         var tickStyle = TickStyle.warning;
+        var logType = LogType.MyCard;
 
         var heldId = conn.Table<HeldCard>().OrderByDescending(o => o.EventId).FirstOrDefaultAsync()?.Result?.EventId ?? 0;
         heldId++;
@@ -265,22 +266,26 @@ public class DBService
                 {
                     tickColour = settings.MyCardColour;
                     tickStyle = settings.MyCardStyle;
+                    logType = LogType.MyCard;
                 }
                 else if (player.TmpIsConfirmed) 
                 {
                     tickColour = settings.ConfirmedCardSeenColour;
                     tickStyle = settings.ConfirmedCardSeenStyle;
+                    logType = LogType.CardSeen;
                 }
                 else if (player.TmpHasACard)
                 {
                     tickColour = settings.CardShownColour;
+                    logType = LogType.PossibleCardEvent;
                 }
                 else if (player.TmpHasNoCard)
                 {
                     tickColour = settings.ConfirmedNoCardColour;
                     tickStyle = settings.ConfirmedNoCardStyle;
+                    logType = LogType.NoCardEvent;
                 }
-                
+
                 var c = new HeldCard()
                 {
                     CardId = card.Id,
@@ -289,6 +294,7 @@ public class DBService
                     PlayerId = player.Id,
                     TickColour = tickColour,
                     TickStyle = tickStyle,
+                    LogType = logType
                 };
                 await conn.InsertAsync(c);
                 player.HeldCards.Add(c);
