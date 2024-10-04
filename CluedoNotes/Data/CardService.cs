@@ -44,4 +44,9 @@ public class CardService
     {
         return await App._dbService.DeleteHistoryEvent(heldCard);
     }
+
+    public async Task ResetEventHistory()
+    {
+        await App._dbService.DeleteAllHistoryEvent();
+    }
 }

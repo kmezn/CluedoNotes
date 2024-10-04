@@ -11,14 +11,12 @@ public class DBService
     }
     private async Task InitAsync()
     {
-        // Don't Create database if it exists
+        // Don't Create database connection if it exists
         if (conn != null)
             return;
         
-        // Create database and Card Table
+        // Create database and Tables
         conn = new SQLiteAsyncConnection(MauiProgram.DatabasePath, MauiProgram.Flags);
-        //conn = new SQLiteAsyncConnection(_dbPath);
-
         await conn.CreateTableAsync<Card>();
         await conn.CreateTableAsync<Player>();
         await conn.CreateTableAsync<HeldCard>();
@@ -36,20 +34,8 @@ public class DBService
             MyCardStyle = TickStyle.bookmark,
         };
         await UpdateSettingsAsync(defaultSettings);
-
         await InitDefaultCards(GameVersion.Classic);
         await InitDefaultPlayers();
-
-        //List<Task<Card>> cardTasks = new List<Task<Card>>();
-        //debugCards.ForEach(r => cardTasks.Add(CreateCardAsync(r)));
-        //var debugPlayers = new List<Player>()
-        //{
-        //    new Player(){Name = ""}
-        //};
-        //List<Task<Player>> playerTasks = new List<Task<Player>>();
-        //debugPlayers.ForEach(p => playerTasks.Add(CreatePlayerAsync(p)));
-        //Task.WaitAll(playerTasks.ToArray());
-        //Task.WaitAll(cardTasks.ToArray());    
     }
     public async Task ChangeDefaultCards(GameVersion version)
     {
@@ -118,7 +104,7 @@ public class DBService
                 });
                 break;
         }
-        /// fix existing cards being added in addition. 
+        /// fix existing cards being added in addition . 
         var existingCards = await GetCardsAsync();
         cards.Where(c => !existingCards.Any(a => a.Name == c.Name)).ToList().ForEach(async r => await CreateCardAsync(r));
         
@@ -143,22 +129,16 @@ public class DBService
     }
     public async Task<Card> CreateCardAsync(Card card)
     {
-        // Insert
         await conn.InsertAsync(card);
-        // return the object with the
-        // auto incremented Id populated
         return card;
     }
     public async Task<Card> UpdateCardAsync(Card card)
     {
-        // Update
         await conn.UpdateAsync(card);
-        // Return the updated object
         return card;
     }
     public async Task<Card> DeleteCardAsync(Card card)
     {
-        // Delete
         await conn.DeleteAsync(card);
         return card;
     }
@@ -183,13 +163,11 @@ public class DBService
             if (player.HeldCards.Any())
                 await GetPlayerHeldCards(player);
         }
-
         return players;
     }
 
     public async Task<Player> GetPlayerHeldCards(Player player)
     {
-        //****** would it be better to have cards and players stored as _players and _cards? ******
         var allCards = await conn.Table<Card>().ToListAsync();
         foreach (var card in player.HeldCards)
         {
@@ -208,48 +186,27 @@ public class DBService
             heldCard.Card = allCards.First(c => c.Id == heldCard.CardId);
             heldCard.Player = players.First(p => p.Id == heldCard.PlayerId);
         }
-
         return allHeldCards;
     }
 
     public async Task<Player> CreatePlayerAsync(Player player)
     {
-        // Insert
         await conn.InsertAsync(player);
-        // return the object with the
-        // auto incremented Id populated
         return player;
     }
     public async Task<Player> UpdatePlayerAsync(Player player)
     {
-        // Update
         await conn.UpdateAsync(player);
-        // Return the updated object
         return player;
     }
-
-    //public async Task<Player> UpdatePlayerCardsAsync(Player player, List<Card> cards)
-    //{
-    //    var settings = await GetSettingsAsync();
-    //    var heldId = conn.Table<HeldCard>().OrderByDescending(o => o.EventId).FirstOrDefaultAsync()?.Result?.EventId ?? 0;
-    //    heldId++;
-    //    var tickColour = TickColour.purple;
-    //    // loop held cards. 
-    //    foreach (var h in cards)
-    //    {
-            
-            
-    //    }
-    //    // Return the updated object
-    //    return player;
-    //}
 
     public async Task<int> CreateHeldCard(List<Player> players, List<Card> cards)
     {
         var settings = await GetSettingsAsync();
-        // default colour incase a problem arrises... 
+        // default colour in case a problem arises... 
         var tickColour = TickColour.purple;
         var tickStyle = TickStyle.warning;
+        var logType = LogType.MyCard;
 
         var heldId = conn.Table<HeldCard>().OrderByDescending(o => o.EventId).FirstOrDefaultAsync()?.Result?.EventId ?? 0;
         heldId++;
@@ -265,22 +222,26 @@ public class DBService
                 {
                     tickColour = settings.MyCardColour;
                     tickStyle = settings.MyCardStyle;
+                    logType = LogType.MyCard;
                 }
                 else if (player.TmpIsConfirmed) 
                 {
                     tickColour = settings.ConfirmedCardSeenColour;
                     tickStyle = settings.ConfirmedCardSeenStyle;
+                    logType = LogType.CardSeen;
                 }
                 else if (player.TmpHasACard)
                 {
                     tickColour = settings.CardShownColour;
+                    logType = LogType.PossibleCardEvent;
                 }
                 else if (player.TmpHasNoCard)
                 {
                     tickColour = settings.ConfirmedNoCardColour;
                     tickStyle = settings.ConfirmedNoCardStyle;
+                    logType = LogType.NoCardEvent;
                 }
-                
+
                 var c = new HeldCard()
                 {
                     CardId = card.Id,
@@ -289,6 +250,7 @@ public class DBService
                     PlayerId = player.Id,
                     TickColour = tickColour,
                     TickStyle = tickStyle,
+                    LogType = logType
                 };
                 await conn.InsertAsync(c);
                 player.HeldCards.Add(c);
@@ -299,23 +261,14 @@ public class DBService
 
     public async Task<Player> DeletePlayerAsync(Player player)
     {
-        // Delete
         await conn.DeleteAsync(player);
         return player;
     }
 
     public async Task<Settings> GetSettingsAsync()
-    { // probably the initial landing page... 
-        try
-        {
+    {
             await InitAsync();
             return await conn.Table<Settings>().FirstAsync();
-        }
-        catch (Exception ex)
-        {
-
-            throw;
-        }
     }
     public async Task DeleteAllHistoryEvent()
     {
@@ -328,16 +281,8 @@ public class DBService
 
     public async Task<HeldCard> DeleteHistoryEvent(HeldCard heldCard)
     {
-        try
-        {
             await conn.DeleteAsync(heldCard);
             return heldCard;
-        }
-        catch (Exception ex)
-        {
-
-            throw;
-        }
     }
     public async Task<Settings> UpdateSettingsAsync(Settings settings)
     {
@@ -349,8 +294,6 @@ public class DBService
         {
             await conn.UpdateAsync(settings);
         }
-
-        // Return the updated object
         return settings;
     }
 

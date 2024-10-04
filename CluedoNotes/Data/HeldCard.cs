@@ -27,6 +27,13 @@ namespace CluedoNotes.Data
         pencil = 5,
         minus = 6
     }
+    public enum LogType
+    {
+        MyCard = 0,
+        CardSeen = 1,
+        NoCardEvent = 2,
+        PossibleCardEvent = 3,
+    }
     public class HeldCard
     {
         [PrimaryKey, AutoIncrement]
@@ -35,7 +42,7 @@ namespace CluedoNotes.Data
         public int EventId { get; set; }
 
         [ForeignKey(typeof(Card))]
-        public int CardId {  get; set; }
+        public int CardId { get; set; }
         [OneToMany(CascadeOperations = CascadeOperation.CascadeRead)]
         public Card Card { get; set; }
 
@@ -51,5 +58,8 @@ namespace CluedoNotes.Data
         // tick colour used for confirmation tick or eventId display on game notes page.
         [EnumDataType(typeof(TickColour))]
         public TickStyle TickStyle { get; set; }
+
+        [EnumDataType(typeof(LogType))]
+        public LogType LogType { get; set; }
     }
 }

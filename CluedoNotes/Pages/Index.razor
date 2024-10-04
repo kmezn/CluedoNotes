@@ -84,23 +84,15 @@ Setup your Players and Cards before playing.
                 Save
             </button>
         </li>
-        </ul>
-        </div>
-        <br />
-    <div class="form-control settingsPage">
-        <ul>
+    </ul>
+</div>
+<br />
+<div class="form-control settingsPage">
+
+    <h2>Game Version</h2>
+    <ul>
         <li>
-            Reset data for next games (keeps cards and player names. removed all event History and Held Cards.)
-            <button class="btn btn-info"
-                    @onclick="ResetGame">
-                Reset!
-            </button>
-        </li>
-        <li>
-            Some other settings???
-        </li>
-        <li>
-            <InputSelect class="form-control" @bind-Value="@_settings.GameVersion">
+            <InputSelect class="form-control settings-dropdown" @bind-Value="@_settings.GameVersion">
                 @foreach (var type in Enum.GetValues(typeof(GameVersion)))
                 {
                     <option value="@type">@type</option>
@@ -135,12 +127,6 @@ Setup your Players and Cards before playing.
     async Task SaveSettings()
     {
         _settings = await PlayerService.UpdateSettingsAsync(_settings);
-    }
-
-    async Task ResetGame()
-    {
-        await PlayerService.ResetEventHistory();
-        // modal to confirm.... then reset event history....
     }
     async Task DefaultCardsSelect()
     {
