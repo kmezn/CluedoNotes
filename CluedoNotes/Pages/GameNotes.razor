@@ -332,8 +332,6 @@ else
                             @onclick="SaveCardGuess">
                         Save
                     </button>
-                    @* </div>  *@
-
                 </div>
             </div>
         </div>
@@ -352,7 +350,6 @@ else
     CardType _prevCardType = CardType.Weapon;
     bool _ShowCardGuessPopup = false;
     bool _ShowConfirmCardPopup = false;
-    bool _IsCardConfirmed = true;
     bool _showDetailedEvents = false;
 
     protected override async Task OnInitializedAsync()
@@ -375,67 +372,31 @@ else
 
     void AddNewCardGuessEvent()
     {
-        // Make new forecast
         _objPlayer = new Player();
-        // Set Id to 0 so we know it is a new record
         _objPlayer.Id = 0;
-        // Open the Popup for a guess event.
-        _IsCardConfirmed = false;
         _ShowCardGuessPopup = true;
     }
-    // void EditPlayerCards(Player player)
-    // {
-    //     // Set the selected forecast
-    //     // as the current forecast
-    //     _objPlayer = player;
-    //     // Open the Popup
-    //     _ShowCardGuessPopup = true;
-    // }
 
     async void CloseCardGuessPopup()
     {
-        string _Error = "";
         _ShowCardGuessPopup = false;
         await OnInitializedAsync();
     }
     async void CloseCardConfirmPopup()
     {
-        string _Error = "";
         _ShowConfirmCardPopup = false;
         await OnInitializedAsync();
     }
     async Task CardSeen()
     {
-        try
-        {
-
-            _objPlayer.TmpHasACard = true;
-            _objPlayer.TmpIsConfirmed = true;
-            await PlayerService.UpdatePlayerCardsAsync(_objPlayer, _MyCards.Where(w => w.Selected).ToList());
-            CloseCardConfirmPopup();
-
-        }
-        catch (Exception ex)
-        {
-            _Error = ex.Message;
-        }
+        _objPlayer.TmpHasACard = true;
+        _objPlayer.TmpIsConfirmed = true;
+        await PlayerService.UpdatePlayerCardsAsync(_objPlayer, _MyCards.Where(w => w.Selected).ToList());
+        CloseCardConfirmPopup();
     }
     async Task SaveCardGuess()
     {
-        // Close the Popup
-        // _ShowPlayerCardsPopup = false;
-        _Error = "";
-        try
-        {
-
-            await CardService.CreateHeldCardGuess(_Players, _Cards.Where(w => w.Selected).ToList());
-        }
-        catch (Exception ex)
-        {
-            _Error = ex.Message;
-        }
-
+        await CardService.CreateHeldCardGuess(_Players, _Cards.Where(w => w.Selected).ToList());
         CloseCardGuessPopup();
-
     }
 }
