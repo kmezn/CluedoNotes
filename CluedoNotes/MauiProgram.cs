@@ -6,6 +6,7 @@ namespace CluedoNotes
     public static class MauiProgram
     {
         public const string DatabaseFilename = @"CluedoNotes.db";
+        public const string VersionNumber = "1.0.1";
         public const SQLite.SQLiteOpenFlags Flags =
             SQLite.SQLiteOpenFlags.ReadWrite |
             SQLite.SQLiteOpenFlags.Create |

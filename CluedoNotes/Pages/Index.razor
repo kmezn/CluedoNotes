@@ -89,7 +89,7 @@ Setup your Players and Cards before playing.
 <br />
 <div class="form-control settingsPage">
 
-    <h2>Game Version</h2>
+    <h2>Game Version</h2> 
     <ul>
         <li>
             <InputSelect class="form-control settings-dropdown" @bind-Value="@_settings.GameVersion">
@@ -106,22 +106,23 @@ Setup your Players and Cards before playing.
 
     </ul>
 </div>
+<footer>
+    Version number: v@_versionNumber
+</footer>
 
 
-
-
-@* <SurveyPrompt Title="How is Blazor working for you?" /> *@
 @code
 {
     string _error = "";
     Settings _settings = new Settings();
     bool _showPlayerPopup = false;
+    string _versionNumber = "0.0";
 
     protected override async Task OnInitializedAsync()
     {
         // Get the forecasts
         _settings = await PlayerService.GetSettingsAsync();
-
+        _versionNumber = PlayerService.GetVersionNumber();
     }
 
     async Task SaveSettings()

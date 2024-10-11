@@ -33,9 +33,26 @@ public class DBService
             MyCardColour = TickColour.Blue,
             MyCardStyle = TickStyle.bookmark,
         };
-        await UpdateSettingsAsync(defaultSettings);
-        await InitDefaultCards(GameVersion.Classic);
-        await InitDefaultPlayers();
+
+        var settingsCheck = await conn.Table<Settings>().CountAsync();
+        if (settingsCheck == 0)
+        {
+            await UpdateSettingsAsync(defaultSettings);
+        }
+
+        var cardsCheck = await conn.Table<Card>().CountAsync();
+        if (cardsCheck == 0)
+        {
+            await InitDefaultCards(GameVersion.Classic);
+        }
+        
+        var playerCheck = await conn.Table<Player>().CountAsync();
+        if (playerCheck == 0)
+        {
+            await InitDefaultPlayers();
+        }
+        
+        
     }
     public async Task ChangeDefaultCards(GameVersion version)
     {
