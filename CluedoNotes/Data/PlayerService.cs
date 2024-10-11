@@ -49,4 +49,9 @@ public class PlayerService
     {
         await App._dbService.ChangeDefaultCards(version);
     }
+
+    public string GetVersionNumber()
+    {
+        return MauiProgram.VersionNumber;
+    }
 }
