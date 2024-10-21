@@ -46,13 +46,18 @@ a, .btn-link {
 }
 .settings-dropdown {
     margin: 5px;
-    width: 30%;
+    width: 80%;
     min-width: 111px;
 }
-.settingsPage li {
-    display: flex;
-}
 
+@media only screen and (min-width: 700px) {
+    .settingsPage li {
+        display: flex;
+    }
+    .settings-dropdown {
+        width: 60%;        
+    }
+}
 .settingsPage li select {
     display: flex;
 }
