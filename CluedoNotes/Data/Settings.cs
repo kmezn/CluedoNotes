@@ -1,8 +1,5 @@
 ﻿using SQLite;
-using SQLiteNetExtensions.Attributes;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using ForeignKeyAttribute = SQLiteNetExtensions.Attributes.ForeignKeyAttribute;
 
 namespace CluedoNotes.Data
 {
@@ -14,7 +11,8 @@ namespace CluedoNotes.Data
     public enum GameVersion
     {
         Classic = 0,
-        EnglishHerritige = 1
+        EnglishHerritige = 1,
+        Simpsons = 2
     }
 
     
