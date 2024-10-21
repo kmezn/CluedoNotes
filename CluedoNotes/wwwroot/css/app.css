@@ -26,15 +26,6 @@ a, .btn-link {
 }
 
 
-/*This will work on every browser but Chrome Browser*/
-/*.table-fixed thead {
-    position: sticky;
-    position: -webkit-sticky;
-    top: 0;
-    z-index: 999;
-    background-color: #000;
-    color: #fff;
-}*/
 /*This will work on every browser*/
 .table-fixed th {
     position: sticky;
@@ -70,10 +61,7 @@ a, .btn-link {
     background-color: darkgoldenrod;
     color: white;
 }
-/*
-.modal-content {
-    background-color: darkslategrey;
-}*/
+
 .form-control select option {
     background-color: darkslategrey;
 }

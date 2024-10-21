@@ -14,7 +14,7 @@ public class DBService
         // Don't Create database connection if it exists
         if (conn != null)
             return;
-        
+
         // Create database and Tables
         conn = new SQLiteAsyncConnection(MauiProgram.DatabasePath, MauiProgram.Flags);
         await conn.CreateTableAsync<Card>();
@@ -45,14 +45,14 @@ public class DBService
         {
             await InitDefaultCards(GameVersion.Classic);
         }
-        
+
         var playerCheck = await conn.Table<Player>().CountAsync();
         if (playerCheck == 0)
         {
             await InitDefaultPlayers();
         }
-        
-        
+
+
     }
     public async Task ChangeDefaultCards(GameVersion version)
     {
@@ -69,7 +69,7 @@ public class DBService
         switch (version)
         {
             case GameVersion.Classic:
-                 cards.AddRange( new List<Card>()
+                cards.AddRange( new List<Card>()
                 {
                     new Card(){Name ="Miss Scarlett", CardType = CardType.Suspect },
                     new Card(){Name = "Colonel Mustard", CardType = CardType.Suspect },
@@ -120,11 +120,37 @@ public class DBService
                     new Card(){Name = "Dover Tunnels", CardType = CardType.Room },
                 });
                 break;
+            case GameVersion.Simpsons:
+                cards.AddRange(new List<Card>()
+                {
+                    new (){Name = "Krusty The Clown", CardType = CardType.Suspect },
+                    new (){Name = "Bart Simpson", CardType = CardType.Suspect },
+                    new (){Name = "Homer Simpson", CardType = CardType.Suspect},
+                    new (){Name = "Marge Simpson", CardType = CardType.Suspect },
+                    new (){Name = "Lisa Simpson", CardType = CardType.Suspect },
+                    new (){Name = "Waylon Smithers", CardType = CardType.Suspect },
+                    new (){Name = "Poisoned Doughnut", CardType = CardType.Weapon },
+                    new (){Name = "Extend-o-Glove", CardType = CardType.Weapon },
+                    new (){Name = "Necklace", CardType = CardType.Weapon },
+                    new (){Name = "Slingshot", CardType = CardType.Weapon },
+                    new (){Name = "Plutonium Rod", CardType = CardType.Weapon },
+                    new (){Name = "Saxophone", CardType = CardType.Weapon },
+                    new (){Name = "Barney's Bowl-a-Rama", CardType = CardType.Room },
+                    new (){Name = "Krustylu Studios", CardType = CardType.Room },
+                    new (){Name = "Nuclear Power Plant", CardType = CardType.Room },
+                    new (){Name = "The Simpson House", CardType = CardType.Room },
+                    new (){Name = "The Frying Dutchman", CardType = CardType.Room },
+                    new (){Name = "Kwik-e-Mart", CardType = CardType.Room },
+                    new (){Name = "Burns Manor", CardType = CardType.Room },
+                    new (){Name = "Retirement Castle", CardType = CardType.Room },
+                    new (){Name = "Android's Dungeon", CardType = CardType.Room },
+                });
+                break;
         }
         /// fix existing cards being added in addition . 
         var existingCards = await GetCardsAsync();
         cards.Where(c => !existingCards.Any(a => a.Name == c.Name)).ToList().ForEach(async r => await CreateCardAsync(r));
-        
+
     }
     private async Task InitDefaultPlayers()
     {
@@ -141,8 +167,8 @@ public class DBService
     }
     public async Task<List<Card>> GetCardsAsync()
     {
-            
-            return await conn.Table<Card>().ToListAsync();
+
+        return await conn.Table<Card>().ToListAsync();
     }
     public async Task<Card> CreateCardAsync(Card card)
     {
@@ -170,7 +196,7 @@ public class DBService
                 Name = "My Cards"
             }
         };
-        players.AddRange( await conn.Table<Player>().ToListAsync());
+        players.AddRange(await conn.Table<Player>().ToListAsync());
 
         foreach (var player in players)
         {
@@ -198,7 +224,7 @@ public class DBService
         var allCards = await conn.Table<Card>().ToListAsync();
         var players = await GetPlayersAsync();
         var allHeldCards = await conn.Table<HeldCard>().ToListAsync();
-        foreach(var heldCard in allHeldCards)
+        foreach (var heldCard in allHeldCards)
         {
             heldCard.Card = allCards.First(c => c.Id == heldCard.CardId);
             heldCard.Player = players.First(p => p.Id == heldCard.PlayerId);
@@ -228,20 +254,20 @@ public class DBService
         var heldId = conn.Table<HeldCard>().OrderByDescending(o => o.EventId).FirstOrDefaultAsync()?.Result?.EventId ?? 0;
         heldId++;
 
-        foreach (var player in players.Where(p => p.TmpHasACard || p.TmpHasNoCard)) 
+        foreach (var player in players.Where(p => p.TmpHasACard || p.TmpHasNoCard))
         {
             player.HeldCards = await conn.Table<HeldCard>()
                 .Where(w => w.PlayerId == player.Id)
                 .ToListAsync();
             foreach (var card in cards)
             {
-                if (player.Id == 0 || player.TmpShownMyCard) 
+                if (player.Id == 0 || player.TmpShownMyCard)
                 {
                     tickColour = settings.MyCardColour;
                     tickStyle = settings.MyCardStyle;
                     logType = LogType.MyCard;
                 }
-                else if (player.TmpIsConfirmed) 
+                else if (player.TmpIsConfirmed)
                 {
                     tickColour = settings.ConfirmedCardSeenColour;
                     tickStyle = settings.ConfirmedCardSeenStyle;
@@ -284,8 +310,8 @@ public class DBService
 
     public async Task<Settings> GetSettingsAsync()
     {
-            await InitAsync();
-            return await conn.Table<Settings>().FirstAsync();
+        await InitAsync();
+        return await conn.Table<Settings>().FirstAsync();
     }
     public async Task DeleteAllHistoryEvent()
     {
@@ -298,8 +324,8 @@ public class DBService
 
     public async Task<HeldCard> DeleteHistoryEvent(HeldCard heldCard)
     {
-            await conn.DeleteAsync(heldCard);
-            return heldCard;
+        await conn.DeleteAsync(heldCard);
+        return heldCard;
     }
     public async Task<Settings> UpdateSettingsAsync(Settings settings)
     {
