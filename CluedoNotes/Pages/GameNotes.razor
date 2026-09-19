@@ -178,6 +178,10 @@ else
                                 ).OrderBy(t => t.Name))
                                 {
                                     <label class="cardNoteSelection">
+                                    @if (_Players.Any(p => p.Id == 0 && p.HeldCards.Any(h => h.IsConfirmed && objCard.Id == h.CardId)))
+                                        {
+                                            <span class="oi oi-@_settings.MyCardStyle.ToString()" style="color:@_settings.MyCardColour.ToString()"></span>
+                                        }
                                         @objCard.Name
                                         <InputCheckbox class="" style="margin:5px;"
                                                        @bind-Value="objCard.Selected"></InputCheckbox>
@@ -193,6 +197,10 @@ else
                                 || !_objPlayer.TmpShownMyCard)).OrderBy(t => t.Name))
                                 {
                                     <label class="cardNoteSelection">
+                                    @if (_Players.Any(p => p.Id == 0 && p.HeldCards.Any(h => h.IsConfirmed && objCard.Id == h.CardId)))
+                                        {
+                                            <span class="oi oi-@_settings.MyCardStyle.ToString()" style="color:@_settings.MyCardColour.ToString()"></span>
+                                        }
                                         @objCard.Name
                                         <InputCheckbox class="" style="margin:5px;"
                                                        @bind-Value="objCard.Selected"></InputCheckbox>
@@ -208,6 +216,10 @@ else
                                 || !_objPlayer.TmpShownMyCard)).OrderBy(t => t.Name))
                                 {
                                     <label class="cardNoteSelection">
+                                    @if (_Players.Any(p => p.Id == 0 && p.HeldCards.Any(h => h.IsConfirmed && objCard.Id == h.CardId)))
+                                        {
+                                            <span class="oi oi-@_settings.MyCardStyle.ToString()" style="color:@_settings.MyCardColour.ToString()"></span>
+                                        }
                                         @objCard.Name
                                         <InputCheckbox class="" style="margin:5px;"
                                                        @bind-Value="objCard.Selected"></InputCheckbox>
@@ -256,9 +268,15 @@ else
                                     if (!(roomSelected && !objCard.Selected))
                                     {
                                         <label class="cardNoteSelection">
+                                            @*icon for showing the card is owned by the player.*@
+                                            @if (_Players.Any(p => p.Id == 0 && p.HeldCards.Any(h => h.IsConfirmed && objCard.Id == h.CardId)))
+                                            {
+                                                <span class="oi oi-@_settings.MyCardStyle.ToString()" style="color:@_settings.MyCardColour.ToString()"></span>
+                                            }
                                             @objCard.Name
                                             <InputCheckbox class="" style="margin:5px;"
                                                            @bind-Value="objCard.Selected"></InputCheckbox>
+                                        
                                         </label>
                                     }
                                 }
@@ -272,10 +290,17 @@ else
                                 {
                                     if (!(suspectSelected && !objCard.Selected))
                                     {
+                                        
                                         <label class="cardNoteSelection">
+                                            @*icon for showing the card is owned by the player.*@
+                                            @if (_Players.Any(p => p.Id == 0 && p.HeldCards.Any(h => h.IsConfirmed && objCard.Id == h.CardId)))
+                                            {
+                                                <span class="oi oi-@_settings.MyCardStyle.ToString()" style="color:@_settings.MyCardColour.ToString()"></span>
+                                            }
                                             @objCard.Name
                                             <InputCheckbox class="" style="margin:5px;"
                                                            @bind-Value="objCard.Selected"></InputCheckbox>
+                                        
                                         </label>
                                     }
                                 }
@@ -290,10 +315,17 @@ else
                                     if (!(weaponSelected && !objCard.Selected))
                                     {
                                         <label class="cardNoteSelection">
+                                            @if (_Players.Any(p => p.Id == 0 && p.HeldCards.Any(h => h.IsConfirmed && objCard.Id == h.CardId)))
+                                            {
+                                                <span class="oi oi-@_settings.MyCardStyle.ToString()" style="color:@_settings.MyCardColour.ToString()"></span>
+                                            }
                                             @objCard.Name
                                             <InputCheckbox class="" style="margin:5px;"
                                                            @bind-Value="objCard.Selected"></InputCheckbox>
+                                                           @*icon for showing the card is owned by the player.*@
+                                        
                                         </label>
+                                        
                                     }
                                 }
                             }
