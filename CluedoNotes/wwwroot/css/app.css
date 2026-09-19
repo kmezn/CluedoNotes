@@ -58,7 +58,7 @@ a, .btn-link {
 }
 
 .modal-content, .form-control {
-    background-color: darkgoldenrod;
+    background-color: rgb(24, 3, 24) ;
     color: white;
 }
 

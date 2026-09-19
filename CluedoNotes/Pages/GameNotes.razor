@@ -259,30 +259,7 @@ else
                 </div>
                 <div class="modal-body">
                     <div class="cardSelectSection">
-                        <h4>@CardType.Room</h4>
-                        <div class="roomSection">
-                            @{
-                                var roomSelected = _Cards.Where(w => w.CardType == CardType.Room && w.Selected).Any();
-                                foreach (var objCard in _Cards.Where(w => w.CardType == CardType.Room).OrderBy(t => t.Name))
-                                {
-                                    if (!(roomSelected && !objCard.Selected))
-                                    {
-                                        <label class="cardNoteSelection">
-                                            @*icon for showing the card is owned by the player.*@
-                                            @if (_Players.Any(p => p.Id == 0 && p.HeldCards.Any(h => h.IsConfirmed && objCard.Id == h.CardId)))
-                                            {
-                                                <span class="oi oi-@_settings.MyCardStyle.ToString()" style="color:@_settings.MyCardColour.ToString()"></span>
-                                            }
-                                            @objCard.Name
-                                            <InputCheckbox class="" style="margin:5px;"
-                                                           @bind-Value="objCard.Selected"></InputCheckbox>
-                                        
-                                        </label>
-                                    }
-                                }
-                            }
-                        </div>
-                        <h4>@CardType.Suspect</h4>
+                    <h4>@CardType.Suspect</h4>
                         <div class="suspectSection">
                             @{
                                 var suspectSelected = _Cards.Where(w => w.CardType == CardType.Suspect && w.Selected).Any();
@@ -306,6 +283,30 @@ else
                                 }
                             }
                         </div>
+                        <h4>@CardType.Room</h4>
+                        <div class="roomSection">
+                            @{
+                                var roomSelected = _Cards.Where(w => w.CardType == CardType.Room && w.Selected).Any();
+                                foreach (var objCard in _Cards.Where(w => w.CardType == CardType.Room).OrderBy(t => t.Name))
+                                {
+                                    if (!(roomSelected && !objCard.Selected))
+                                    {
+                                        <label class="cardNoteSelection">
+                                            @*icon for showing the card is owned by the player.*@
+                                            @if (_Players.Any(p => p.Id == 0 && p.HeldCards.Any(h => h.IsConfirmed && objCard.Id == h.CardId)))
+                                            {
+                                                <span class="oi oi-@_settings.MyCardStyle.ToString()" style="color:@_settings.MyCardColour.ToString()"></span>
+                                            }
+                                            @objCard.Name
+                                            <InputCheckbox class="" style="margin:5px;"
+                                                           @bind-Value="objCard.Selected"></InputCheckbox>
+                                        
+                                        </label>
+                                    }
+                                }
+                            }
+                        </div>
+                        
                         <h4>@CardType.Weapon</h4>
                         <div class="weaponSection">
                             @{
