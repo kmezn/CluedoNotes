@@ -2,7 +2,7 @@
 @using CluedoNotes.Data
 @inject PlayerService PlayerService
 @inject CardService CardService
-<h1>Players</h1>
+
 <p style="color:red">@_Error</p>
 @if (_Players == null && _Cards == null)
 {
@@ -390,6 +390,11 @@ else
         _Players = await PlayerService.GetPlayersAsync();
         _Cards = await CardService.GetCardsAsync();
         _settings = await PlayerService.GetSettingsAsync();
+        if (_Players.Count <= 1)
+        {
+            await PlayerService.InitDefaultPlayers();
+            _Players = await PlayerService.GetPlayersAsync();
+        }
         StateHasChanged();
     }
 

@@ -62,6 +62,12 @@ public class DBService
             await DeleteCardAsync(i);
         });
         await InitDefaultCards(version);
+
+        var playerCheck = await conn.Table<Player>().CountAsync();
+        if (playerCheck == 0)
+        {
+            await InitDefaultPlayers();
+        }
     }
     private async Task InitDefaultCards(GameVersion version)
     {
@@ -147,12 +153,12 @@ public class DBService
                 });
                 break;
         }
-        /// fix existing cards being added in addition . 
+        // fix existing cards being added in addition . 
         var existingCards = await GetCardsAsync();
         cards.Where(c => !existingCards.Any(a => a.Name == c.Name)).ToList().ForEach(async r => await CreateCardAsync(r));
 
     }
-    private async Task InitDefaultPlayers()
+    public async Task InitDefaultPlayers()
     {
         var debugPlayers = new List<Player>()
         {

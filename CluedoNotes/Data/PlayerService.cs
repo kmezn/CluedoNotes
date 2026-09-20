@@ -54,4 +54,9 @@ public class PlayerService
     {
         return MauiProgram.VersionNumber;
     }
+
+    public async Task InitDefaultPlayers() 
+    {
+        await App._dbService.InitDefaultPlayers();
+    }
 }
